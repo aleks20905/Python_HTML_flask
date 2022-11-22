@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+    <div style="position: absolute; height:30vh; width:70vw">
+        <canvas id="myChart"></canvas>
+        <canvas id="timeSeriesChart"></canvas>
+    </div>
+
+    <!-- <div id="myDiv"></div> -->
+    <div id="myDiv2"></div>
+    <!--<canvas id ="newchart" width="400" height="400"></canvas>  -->
+    <!-- 
+    <canvas id="myChart" width="400" height="400"></canvas>
+    -->
+    
+    <!-- 
+    {% for temps in temps %}
+    <p>{{ temps.id }} -|{{ temps.device }}|- {{ temps.temp1 }}|{{ temps.temp2 }} - {{ temps.temp3 }} - {{ temps.temp4 }} - {{ temps.state1 }} -  {{ temps.time }}</p>
+    {% endfor %}
+
+    
+
+    
+    -->
+   
+    
+
+
+</body>
+</html>
+
+
+{% block javascripts %}
+
+<script>
+     
+    charts = document.getElementById("newchart");//html canvas
+    //values of x and y axes
+    var days = {{date | safe }};//x axes
+    var litres = {{temps | safe }};//y axes
+    //create a line chart
+    new Chart(charts, {
+        type: 'line', //This is a line chart
+        data: {
+        labels: days, //x-axes data 
+        datasets: [{
+            label:"Line Chart",
+        data: litres, //y-axes data 
+        borderColor: 'black',
+        fill: false,
+        }]
+        },
+       });
+
+</script>
+<script>
+    Plotly.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv", function(err, rows){
+
+        function unpack(rows, key) {
+        return rows.map(function(row) { return row[key]; });
+      }
+      
+        
+      var trace1 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL High',
+        x: [10,9,8,7,6,5,4,3,2,1,0],
+        y: [10,9,8,7,6,5,4,3,2,1,0],
+        line: {color: '#17BECF'}
+      }
+      
+      var trace2 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL Low',
+        x: unpack(rows, 'Date'),
+        y: unpack(rows, 'AAPL.Low'),
+        line: {color: '#7F7F7F'}
+      }
+      
+      var data = [trace1,trace2];
+          
+      var layout = {
+        title: 'Basic Time Series', 
+      };
+      
+      Plotly.newPlot('myDiv', data, layout, {showSendToCloud: true});
+      })
+</script>
+
+<script>
+     
+      var trace1 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL High',
+        x:  {{date | safe }},
+        y:  {{temps | safe }},
+        line: {color: '#17BECF'}
+      }
+      
+      var trace2 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL Low',
+        x:  {{date | safe }},
+        y:  {{temps | safe }},
+        line: {color: '#7F7F7F'}
+      }
+      
+      var data = [trace1,trace2];
+          
+      var layout = {
+        title: 'Basic Time Series', 
+      };
+      
+      Plotly.newPlot('myDiv2', data, layout, {showSendToCloud: true});
+</script>
+
+
+{% endblock javascripts %}
+
+
+
