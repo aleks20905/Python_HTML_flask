@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import psycopg2
 import psycopg2.extras
+import json
 
 
 hostname = 'localhost'
@@ -59,7 +60,9 @@ class temps(db.Model):
   time = db.Column(db.TIMESTAMP)
 
 
-
+def Extract(lst,t):
+    return ['{}'.format(getattr(item,t)) for item in lst]
+  
 @app.route('/')
 def index():
   return render_template('index.html')
@@ -69,23 +72,17 @@ def show():
   
   strur = temps.query.all() #print(strur[1].id)
   
-  time = [] 
-  for i in strur:
-    time.append('{}'.format(i.time))
-    
-  temp1 = []
-  for i in strur:
-    temp1.append('{}'.format(i.temp2) )
-    
-  #print(temp1)
+  time = Extract(strur,'time') 
+  temp2 = Extract(strur,'temp2')
   
-  import pandas as pd
-  df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv')
-
-  fig = go.Figure([go.Scatter(x=df['Date'], y=df['AAPL.High'])])
- 
-  print("aaa")
-  return render_template('success.html', gif1 = fig, temps=temp1, date = time)
+  fig = go.Figure()
+  fig.add_trace(go.Scatter(name='temp2', x=time, y=temp2, line_shape='spline',showlegend=True))
+  fig.update_layout(height=500, width=1500, title_text="temps")
+  graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+  
+  #print(temp1)
+  #print("aaa")
+  return render_template('success.html', temps=temp2, date = time, graphJSON = graphJSON)
 
   
   

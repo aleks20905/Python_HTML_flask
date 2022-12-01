@@ -35,6 +35,33 @@
     <br><br>
         <button><a>Send</a></button><br>
 </form>
+
+<script>
+
+let apiToken = "5495441993:AAFy_9ujooWqi5ZH2PiMXCAXoxxf6ZkvUeY";
+let chatId = "-1001683799597";
+let text = "AAAAA";
+
+let urlString = `https://api.telegram.org/bot${apiToken}/sendMessage?chat_id=${chatId}&text=${text}`;
+
+let request = new XMLHttpRequest();
+request.open("GET", urlString);
+request.send();
+
+
+    $(document).ready(function(){
+      $('#MyButton').click(function(){
+        let response = request.response;
+      });
+    });
+</script>
+
+
+  
+<input type="button" value="Capacity Chart" id="MyButton" >
+
+
+
 <img src="/static/phoenix.png" alt="phoenix" width="250" height="250">
 
 </body>

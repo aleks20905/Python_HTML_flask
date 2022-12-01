@@ -13,6 +13,7 @@
         <canvas id="myChart"></canvas>
         <canvas id="timeSeriesChart"></canvas>
     </div>
+    <div id='chart' class='chart'”></div>
 
     <!-- <div id="myDiv"></div> -->
     <div id="myDiv2"></div>
@@ -124,6 +125,12 @@
       };
       
       Plotly.newPlot('myDiv2', data, layout, {showSendToCloud: true});
+</script>
+
+
+<script>
+  var graphs = {{graphJSON | safe}};
+  Plotly.plot('chart',graphs,{});
 </script>
 
 
