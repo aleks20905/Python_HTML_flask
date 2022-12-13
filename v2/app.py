@@ -82,11 +82,6 @@ def alarm(strname, temp):
     if conn is not None:
         conn.close()
 
-
-# thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
-# thread.start()                                        #uncoment to activate alarms
-
-
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'
@@ -139,6 +134,8 @@ def show():
   
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
+  # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
+  # thread.start()                                        #uncoment to activate alarms  
   app.run(debug=True)
 
 
