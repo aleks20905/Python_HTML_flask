@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
 <head>
@@ -66,6 +66,25 @@
         </div>
       </div>
       <div class="chart-row three">
+        <div class="chart-container-wrapper">
+          <div class="chart-container">
+            <div class="chart-info-wrapper">
+              <h2>test</h2>
+              <span id="output">_replace_</span>
+            </div>
+            <div class="chart-svg">
+              <svg viewBox="0 0 36 36" class="circular-chart pink">
+        <path class="circle-bg" d="M18 2.0845
+            a 15.9155 15.9155 0 0 1 0 31.831
+            a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+        <path class="circle" stroke-dasharray="30, 100" d="M18 2.0845
+            a 15.9155 15.9155 0 0 1 0 31.831
+            a 15.9155 15.9155 0 0 1 0 -31.831"></path>  
+        <text x="18" y="20.35" class="percentage">30%</text>
+      </svg>
+            </div>
+          </div>
+        </div>
         <div class="chart-container-wrapper">
           <div class="chart-container">
             <div class="chart-info-wrapper">
@@ -189,28 +208,63 @@
 {% block javascripts %}
 
 
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script>
-     
+
+  var trace1 = {
+    type: "scatter",
+    mode: "lines",
+    name: 'AAPL High',
+    x:  {{date | safe }},
+    y:  {{temps | safe }},
+    line: {color: '#17BECF'}
+  }
+  var trace2 = {
+    type: "scatter",
+    mode: "lines",
+    name: 'AAPL Low',
+    x:  {{date | safe }},
+    y:  {{temps2 | safe }},
+    line: {color: '#7F7F7F'}
+  }
+  var data = [trace1,trace2];
+      
+  var layout = {
+    margin: {
+      l: 20,
+      r: 0,
+      b: 40,
+      t: 25,
+      pad: 3
+    },
+    plot_bgcolor:'rgba(0,0,0,0)',
+    paper_bgcolor:'rgba(0,0,0,0)',
+    title: 'chamber', 
+  };
+  Plotly.newPlot('line-chart', data, layout, {responsive: true});
+
+
+  function updates(){
+
+    $.get("/api/temp2", function(data){
+      //console.log(data['data']);
       var trace1 = {
         type: "scatter",
         mode: "lines",
         name: 'AAPL High',
-        x:  {{date | safe }},
-        y:  {{temps | safe }},
+        x:  data['time'],
+        y:  data['temp2'],
         line: {color: '#17BECF'}
       }
-      
       var trace2 = {
         type: "scatter",
         mode: "lines",
         name: 'AAPL Low',
-        x:  {{date | safe }},
-        y:  {{temps2 | safe }},
+        x:  data['time'],
+        y:  data['temp3'],
         line: {color: '#7F7F7F'}
       }
-      
       var data = [trace1,trace2];
           
       var layout = {
@@ -227,14 +281,29 @@
       };
       
       Plotly.newPlot('line-chart', data, layout, {responsive: true});
+      
+    });
+    }
+    updates()
+    var intervalId = setInterval(function() {
+      updates()
+    }, 1500);
+      
 </script>
 
 <script>
-  // using flask api
-  var graphs = {{graphJSON | safe}};
-  Plotly.plot('aaaline-chart',graphs,{});
-</script>
+        function update(){
+            $.get("/update", function(data){
+                $("#output").html(data)
+            });
+        }
+        update()
+        var intervalId = setInterval(function() {
+            update()
+        }, 1000);
 
+
+</script>
 
 {% endblock javascripts %}
 

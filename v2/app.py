@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask,jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 import plotly
 import plotly_express as px
@@ -128,10 +128,21 @@ def show():
   graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
   
   #print(temp1)
-  #print("aaa")
+  print("aaa")
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, graphJSON = graphJSON)
 
-  
+@app.get("/update")
+def now():
+  strur = temps.query.order_by(temps.id.desc()).first()
+  return str(strur.temp2)
+
+
+@app.get("/api/temp2")
+def temp2():
+  strur = temps.query.all()
+  return {'temp2':Extract(strur,'temp2'), 'time':Extract(strur,'time'),'temp3':Extract(strur,'temp3')}
+
+
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
