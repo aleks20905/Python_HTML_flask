@@ -1,0 +1,1 @@
+device | esp8266 | chaimber | -5.506 | freon | 25 | outsideT | 5 | outsidT | 12 

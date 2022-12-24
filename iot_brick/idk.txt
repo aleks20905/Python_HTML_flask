@@ -1,0 +1,16 @@
+ready 0.Ардуинот да праща нещо в на специфично устройство 
+
+
+ready 1. localna Мрежа в която мога да свържа ардуиното и 
+
+
+ready 2. пращане на пакети с информация лоцално esp32{chaimber, freon, coler, ets...}
+    -ready -- пращат се събщения Manually 
+    -ready --  aвтоматично пращане на множество променливи
+
+3. add to arduino wifi streght 
+
+
+
+4. hookup with DB 
+

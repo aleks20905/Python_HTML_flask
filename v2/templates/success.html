@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+  <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
 <head>
@@ -279,11 +279,13 @@
         paper_bgcolor:'rgba(0,0,0,0)',
         title: 'chamber', 
       };
+      console.log("aa");
       
-      Plotly.newPlot('line-chart', data, layout, {responsive: true});
       
+      Plotly.plot('line-chart', data, layout, {responsive: true});
+      Plotly.deleteTraces('line-chart',[0,1]);
     });
-    }
+  }
     updates()
     var intervalId = setInterval(function() {
       updates()
