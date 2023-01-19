@@ -103,11 +103,11 @@ class temps(db.Model):
 def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
   
-@app.route('/')
-def index():
-  return render_template('index.html')
+# @app.route('/')
+# def index():
+#   return render_template('index.html')
 
-@app.route('/main', methods=['POST'])
+@app.route('/main')
 def show():
   strur = temps.query.all() #print(strur[1].id)
   
@@ -122,7 +122,8 @@ def show():
 
 @app.route('/device')
 def pendel():
-  return render_template('device.html')
+  List = {'device1':15,'device2':20,'device3':30} 
+  return render_template('device.html',list = List.items())
     
 
 @app.get("/update")

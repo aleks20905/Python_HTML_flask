@@ -1,47 +1,272 @@
-<!doctype html>
-
-
-<head><title>Test</title>
-    <meta charset=utf-8>
+<!DOCTYPE html>
+<html lang="en">
+  <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
 </head>
 <body>
-<img src="/static/header.png" alt="header" width="1150" height="150"><br><br>
+  <div class="app-container">
+    <div class="app-left">
+      <button class="close-menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="app-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>       </svg>
+        <span>Recruiter</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-list-item">
+          <a class="nav-list-link" href="/main">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-columns"><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/></svg>
+            Main
+          </a>
+        </li>
+        <li class="nav-list-item active">
+          <a class="nav-list-link" href="/device">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-briefcase"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Devices
+          </a>
+        </li>
+        <li class="nav-list-item">
+          <a class="nav-list-link" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            Applications
+          </a>
+        </li>
+        <li class="nav-list-item">
+          <a class="nav-list-link" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Team
+          </a>
+        </li>
+        <li class="nav-list-item">
+          <a class="nav-list-link" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            Reports
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="app-main">
+      <div class="main-header-line">
+        <h1>Applications Dashboard</h1>
+        <div class="action-buttons">
+          <button class="open-right-area">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </button>
+        <button class="menu-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        </div>
+      </div>
+      <div class="chart-row three">
 
-<form action="/main" method="POST">
-    <label for="fname">First name:</label><br>
-    <input type="text" id="fname" name="fname"><br><br>
-    <label for="lname">Last name:</label><br>
-    <input type="text" id="lname" name="lname"><br><br>
+        <div class="chart-container-wrapper">
+          <div class="chart-container">
+            <div class="chart-info-wrapper">
+              <h2>test</h2>
+              <span id="output">_replace_</span>
+            </div>
+            <div class="chart-svg">
+              <svg viewBox="0 0 36 36" class="circular-chart pink">
+        <path class="circle-bg" d="M18 2.0845
+            a 15.9155 15.9155 0 0 1 0 31.831
+            a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+        <path class="circle" stroke-dasharray="30, 100" d="M18 2.0845
+            a 15.9155 15.9155 0 0 1 0 31.831
+            a 15.9155 15.9155 0 0 1 0 -31.831"></path>  
+        <text x="18" y="20.35" class="percentage">30%</text>
+      </svg>
+            </div>
+          </div>
+        </div>
+        {%for i,y in list%} 
+        <div class="chart-container-wrapper">
+          <div class="chart-container">
+            <div class="chart-info-wrapper">
+              <h2>{{i}}</h2>
+              <span >{{y}}</span>
+            </div>
+            <div class="chart-svg">
+              <svg viewBox="0 0 36 36" class="circular-chart pink">
+                <path class="circle-bg" d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                <path class="circle" stroke-dasharray="30, 100" d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"></path>  
+                <text x="18" y="20.35" class="percentage">30%</text>
+              </svg>
+            </div>
+          </div>
+        </div>
 
- 
-    <label for="pets">Choose your pet:</label>
-    <select name="pets" id="pets">
-        <option value="owl">Owl</option>
-        <option value="cat">Cat</option>
-        <option value="rat">Rat</option>
-        <option value="toad">Toad</option>
-    </select>
-    <br><br>
 
-    <label>Are you staying at Hogwarts during Christmas?</label><br><br>
-
-
-        <input type="radio" id="yes" name="option" value="yes">
-        <label for="yes">Yes</label>
-        <input type="radio" id="no" name="option" value="no">
-        <label for="no">No</label><br>
-
-    <br><br>
-        <button><a>Send</a></button><br>
-</form>
+        {%endfor%} 
 
 
 
-<input type="button" value="Capacity Chart" id="MyButton" >
+      </div>
+      <div class="chart-row two">
+        
+        <div class="chart-container-wrapper small">
+          <div class="chart-container">
+            <div class="chart-container-header">
+              <h2>Acquisitions</h2>
+              <span href="#">This month</span>
+            </div>
+            <div class="acquisitions-bar">
+             <span class="bar-progress rejected" style="width:8%;"></span>
+              <span class="bar-progress on-hold" style="width:10%;"></span>
+              <span class="bar-progress shortlisted" style="width:18%;"></span>
+              <span class="bar-progress applications" style="width:64%;"></span>
+            </div>
+            <div class="progress-bar-info">
+              <span class="progress-color applications"></span>
+              <span class="progress-type">Applications</span>
+              <span class="progress-amount">64%</span>
+            </div>
+            <div class="progress-bar-info">
+              <span class="progress-color shortlisted"></span>
+              <span class="progress-type">Shortlisted</span>
+              <span class="progress-amount">18%</span>
+            </div>
+            <div class="progress-bar-info">
+              <span class="progress-color on-hold"></span>
+              <span class="progress-type">On-hold</span>
+              <span class="progress-amount">10%</span>
+            </div>
+            <div class="progress-bar-info">
+              <span class="progress-color rejected"></span>
+              <span class="progress-type">Rejected</span>
+              <span class="progress-amount">8%</span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    
+  </div>
 
+    
+   
+    
 
-
-<img src="/static/phoenix.png" alt="phoenix" width="250" height="250">
 
 </body>
+</html>
+
+
+{% block javascripts %}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+
+  var trace1 = {
+    type: "scatter",
+    mode: "lines",
+    name: 'AAPL High',
+    x:  {{date | safe }},
+    y:  {{temps | safe }},
+    line: {color: '#17BECF'}
+  }
+  var trace2 = {
+    type: "scatter",
+    mode: "lines",
+    name: 'AAPL Low',
+    x:  {{date | safe }},
+    y:  {{temps2 | safe }},
+    line: {color: '#7F7F7F'}
+  }
+  var data = [trace1,trace2];
+      
+  var layout = {
+    margin: {
+      l: 20,
+      r: 0,
+      b: 40,
+      t: 25,
+      pad: 3
+    },
+    plot_bgcolor:'rgba(0,0,0,0)',
+    paper_bgcolor:'rgba(0,0,0,0)',
+    title: 'chamber', 
+  };
+  Plotly.newPlot('line-chart', data, layout, {responsive: true});
+
+
+  function updates(){
+
+    $.get("/api/temp2", function(data){
+      //console.log(data['data']);
+      var trace1 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL High',
+        x:  data['time'],
+        y:  data['temp2'],
+        line: {color: '#17BECF'}
+      }
+      var trace2 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'AAPL Low',
+        x:  data['time'],
+        y:  data['temp3'],
+        line: {color: '#7F7F7F'}
+      }
+      var data = [trace1,trace2];
+          
+      var layout = {
+        margin: {
+          l: 20,
+          r: 0,
+          b: 40,
+          t: 25,
+          pad: 3
+        },
+        plot_bgcolor:'rgba(0,0,0,0)',
+        paper_bgcolor:'rgba(0,0,0,0)',
+        title: 'chamber', 
+      };
+      console.log("aa");
+      
+      
+      Plotly.plot('line-chart', data, layout, {responsive: true});
+      Plotly.deleteTraces('line-chart',[0,1]);
+    });
+  }
+    updates()
+    var intervalId = setInterval(function() {
+      updates()
+    }, 1500);
+      
+</script>
+
+<script>
+        function update(){
+            $.get("/update", function(data){
+                $("#output").html(data)
+            });
+        }
+        update()
+        var intervalId = setInterval(function() {
+            update()
+        }, 1000);
+
+
+</script>
+
+{% endblock javascripts %}
+
+
+
