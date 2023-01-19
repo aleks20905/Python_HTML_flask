@@ -109,27 +109,15 @@ def index():
 
 @app.route('/main', methods=['POST'])
 def show():
-  
   strur = temps.query.all() #print(strur[1].id)
-  
   
   time = Extract(strur,'time') 
   temp2 = Extract(strur,'temp2')
   temp3 = Extract(strur,'temp3')
-
-
-  fig = go.Figure()
-  fig.add_trace(go.Scatter(name='temp2', x=time, y=temp2,showlegend=True,line_color='purple'))
-  fig.update_layout(height=500,width=900,plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
-  #fig.update_layout(height=500, width=1500, paper_bgcolor="LightSteelBlue")
-  
-#   ‘plot_bgcolor’: ‘rgba(0, 0, 0, 0)’,
-# ‘paper_bgcolor’: ‘rgba(0, 0, 0, 0)’,
-  graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-  List = {15,20,30}
+  List = {'device1':15,'device2':20,'device3':30} 
   #print(temp1)
   print("aaa")
-  return render_template('success.html', temps=temp2, temps2=temp3, date = time, graphJSON = graphJSON, list = List)
+  return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items())
 
 
 @app.route('/device')

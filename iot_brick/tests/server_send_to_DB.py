@@ -15,7 +15,7 @@ conn = None
 
 HEADER = 64
 PORT = 8080
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = '192.168.11.209'
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
