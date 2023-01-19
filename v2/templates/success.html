@@ -22,13 +22,13 @@
       </div>
       <ul class="nav-list">
         <li class="nav-list-item active">
-          <a class="nav-list-link" href="#">
+          <a class="nav-list-link" href="/main">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-columns"><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/></svg>
             Dashboard
           </a>
         </li>
         <li class="nav-list-item">
-          <a class="nav-list-link" href="#">
+          <a class="nav-list-link" href="/device">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-briefcase"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
             Jobs
           </a>
@@ -66,6 +66,7 @@
         </div>
       </div>
       <div class="chart-row three">
+
         <div class="chart-container-wrapper">
           <div class="chart-container">
             <div class="chart-info-wrapper">
@@ -85,11 +86,12 @@
             </div>
           </div>
         </div>
+        {%for i in list%} 
         <div class="chart-container-wrapper">
           <div class="chart-container">
             <div class="chart-info-wrapper">
-              <h2>Applications</h2>
-              <span>20.5 K</span>
+              <h2>test</h2>
+              <span >{{i}}</span>
             </div>
             <div class="chart-svg">
               <svg viewBox="0 0 36 36" class="circular-chart pink">
@@ -98,50 +100,18 @@
             a 15.9155 15.9155 0 0 1 0 -31.831"></path>
         <path class="circle" stroke-dasharray="30, 100" d="M18 2.0845
             a 15.9155 15.9155 0 0 1 0 31.831
-            a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+            a 15.9155 15.9155 0 0 1 0 -31.831"></path>  
         <text x="18" y="20.35" class="percentage">30%</text>
       </svg>
             </div>
           </div>
         </div>
-        <div class="chart-container-wrapper">
-          <div class="chart-container">
-            <div class="chart-info-wrapper">
-              <h2>Shortlisted</h2>
-              <span>5.5 K</span>
-            </div>
-            <div class="chart-svg">
-              <svg viewBox="0 0 36 36" class="circular-chart blue">
-        <path class="circle-bg" d="M18 2.0845
-            a 15.9155 15.9155 0 0 1 0 31.831
-            a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-        <path class="circle" stroke-dasharray="60, 100" d="M18 2.0845
-            a 15.9155 15.9155 0 0 1 0 31.831
-            a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-        <text x="18" y="20.35" class="percentage">60%</text>
-      </svg>
-            </div>
-          </div>
-        </div>
-        <div class="chart-container-wrapper">
-          <div class="chart-container">
-            <div class="chart-info-wrapper">
-              <h2>On-hold</h2>
-              <span>10.5 K</span>
-            </div>
-             <div class="chart-svg">
-              <svg viewBox="0 0 36 36" class="circular-chart orange">
-        <path class="circle-bg" d="M18 2.0845
-            a 15.9155 15.9155 0 0 1 0 31.831
-            a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-        <path class="circle" stroke-dasharray="90, 100" d="M18 2.0845
-            a 15.9155 15.9155 0 0 1 0 31.831
-            a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-        <text x="18" y="20.35" class="percentage">90%</text>
-      </svg>
-            </div>
-          </div>
-        </div>
+
+
+        {%endfor%} 
+
+
+
       </div>
       <div class="chart-row two">
         <div class="chart-container-wrapper big">

@@ -19,7 +19,7 @@ pwd = 'postgres'
 port_id = 5432
 conn = None
 
-def a():
+def comment():
 ### a = 0
 
 # try:
@@ -107,7 +107,7 @@ def Extract(lst,t):
 def index():
   return render_template('index.html')
 
-@app.route('/submit', methods=['POST'])
+@app.route('/main', methods=['POST'])
 def show():
   
   strur = temps.query.all() #print(strur[1].id)
@@ -126,10 +126,16 @@ def show():
 #   ‘plot_bgcolor’: ‘rgba(0, 0, 0, 0)’,
 # ‘paper_bgcolor’: ‘rgba(0, 0, 0, 0)’,
   graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-  
+  List = {15,20,30}
   #print(temp1)
   print("aaa")
-  return render_template('success.html', temps=temp2, temps2=temp3, date = time, graphJSON = graphJSON)
+  return render_template('success.html', temps=temp2, temps2=temp3, date = time, graphJSON = graphJSON, list = List)
+
+
+@app.route('/device')
+def pendel():
+  return render_template('device.html')
+    
 
 @app.get("/update")
 def now():
