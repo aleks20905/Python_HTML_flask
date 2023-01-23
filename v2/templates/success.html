@@ -214,7 +214,7 @@
   };
   Plotly.newPlot('line-chart', data, layout, {responsive: true});
 
-
+  var latestLen = 0;
   function updates(){
 
     $.get("/api/temp2", function(data){
@@ -251,9 +251,12 @@
       };
       console.log("aa");
       
+      if (data['len']!=latestLen){
+        latestLen = data['len']
+        Plotly.plot('line-chart', data, layout, {responsive: true});
+        Plotly.deleteTraces('line-chart',[0,1]);
+      }
       
-      Plotly.plot('line-chart', data, layout, {responsive: true});
-      Plotly.deleteTraces('line-chart',[0,1]);
     });
   }
     updates()

@@ -15,8 +15,8 @@ from threading import Thread
 hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
-#pwd = 'postgres'
-pwd = '123'
+pwd = 'postgres'
+#pwd = '123'
 port_id = 5432
 conn = None
 
@@ -85,8 +85,8 @@ def alarm(strname, temp):
 
 app = Flask(__name__)
 
-#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
 
@@ -102,7 +102,7 @@ class temps(db.Model):
   time = db.Column(db.TIMESTAMP)
 
 
-def getDeviceLatestTelemtry():
+def getAllDeviceLatestTelemtry():
   dic = {}
   for i in getListOfAllDevices():
     dic[i] = float( '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().temp2) )
@@ -126,18 +126,23 @@ def show():
   time = Extract(strur,'time') 
   temp2 = Extract(strur,'temp2')
   temp3 = Extract(strur,'temp3')
-  List = {'device1':15,'device2':20,'device3':30} 
-  #List = getDeviceLatestTelemtry()
-  #print(temp1)
+  #List = {'device1':15,'device2':20,'device3':30} 
+  List = getAllDeviceLatestTelemtry()
   print("aaa")
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items())
 
 
 @app.route('/device')
 def pendel():
-  List = {'device1':15,'device2':20,'device3':30} 
+  #List = {'device1':15,'device2':20,'device3':30} 
+  List = getAllDeviceLatestTelemtry()
   return render_template('device.html',list = List.items())
-    
+
+# latestCheck = len( temps.query.all())
+# def check():
+#   if(latestCheck != len(temps.query.all())):
+#     return True
+#   return False    
 
 @app.get("/update")
 def now():
@@ -148,7 +153,7 @@ def now():
 @app.get("/api/temp2")
 def temp2():
   strur = temps.query.all()
-  return {'temp2':Extract(strur,'temp2'), 'time':Extract(strur,'time'),'temp3':Extract(strur,'temp3')}
+  return {'temp2':Extract(strur,'temp2'), 'time':Extract(strur,'time'),'temp3':Extract(strur,'temp3'),'len':len(strur)}
 
 
 
