@@ -267,9 +267,14 @@
 </script>
 
 <script>
+  var laterstChek = 0
         function update(){
             $.get("/update", function(data){
+              if (laterstChek != data){
+                laterstChek = data
                 $("#output").html(data)
+              }
+                
             });
         }
         update()
