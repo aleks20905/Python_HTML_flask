@@ -102,6 +102,16 @@ class temps(db.Model):
   time = db.Column(db.TIMESTAMP)
 
 
+def getDeviceLatestTelemtry():
+  dic = {}
+  for i in getListOfAllDevices():
+    dic[i] = float( '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().temp2) )
+  return dic  
+  
+
+def getListOfAllDevices():
+  return set(Extract(temps.query.all(),'device'))
+
 def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
   
@@ -117,6 +127,7 @@ def show():
   temp2 = Extract(strur,'temp2')
   temp3 = Extract(strur,'temp3')
   List = {'device1':15,'device2':20,'device3':30} 
+  #List = getDeviceLatestTelemtry()
   #print(temp1)
   print("aaa")
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items())
@@ -144,7 +155,7 @@ def temp2():
 @app.get("/test")
 def test_1():
   temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
-  return str(temp2)
+  return str(temp2)  
 
 # epsUnknow : 35
 # esp32Unknow123 : 1
