@@ -15,7 +15,8 @@ from threading import Thread
 hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
-pwd = 'postgres' #pwd = '123'
+#pwd = 'postgres'
+pwd = '123'
 port_id = 5432
 conn = None
 
@@ -84,8 +85,8 @@ def alarm(strname, temp):
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
-# app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
 
@@ -108,7 +109,7 @@ def Extract(lst,t):
 # def index():
 #   return render_template('index.html')
 
-@app.route('/main')
+@app.route('/')
 def show():
   strur = temps.query.all() #print(strur[1].id)
   
@@ -137,6 +138,17 @@ def now():
 def temp2():
   strur = temps.query.all()
   return {'temp2':Extract(strur,'temp2'), 'time':Extract(strur,'time'),'temp3':Extract(strur,'temp3')}
+
+
+
+@app.get("/test")
+def test_1():
+  temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
+  return str(temp2)
+
+# epsUnknow : 35
+# esp32Unknow123 : 1
+# eps32 : 15
 
 
 
