@@ -15,7 +15,7 @@ from threading import Thread
 hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
-pwd = 'postgres'
+pwd = 'postgres' #pwd = '123'
 port_id = 5432
 conn = None
 
@@ -84,7 +84,8 @@ def alarm(strname, temp):
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+# app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
 
