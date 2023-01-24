@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask,jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 import plotly
 import plotly_express as px
@@ -16,10 +16,11 @@ hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
 pwd = 'postgres'
+#pwd = '123'
 port_id = 5432
 conn = None
 
-def a():
+def comment():
 ### a = 0
 
 # try:
@@ -82,14 +83,10 @@ def alarm(strname, temp):
     if conn is not None:
         conn.close()
 
-
-# thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
-# thread.start()                                        #uncoment to activate alarms
-
-
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
 
@@ -105,33 +102,75 @@ class temps(db.Model):
   time = db.Column(db.TIMESTAMP)
 
 
+def getAllDeviceLatestTelemtry():
+  dic = {}
+  for i in getListOfAllDevices():
+    dic[i] = float( '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().temp2) )
+  return dic  
+  
+
+def getListOfAllDevices():
+  return set(Extract(temps.query.all(),'device'))
+
 def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
   
-@app.route('/')
-def index():
-  return render_template('index.html')
+# @app.route('/')
+# def index():
+#   return render_template('index.html')
 
-@app.route('/submit', methods=['POST'])
+@app.route('/')
 def show():
-  
   strur = temps.query.all() #print(strur[1].id)
   
   time = Extract(strur,'time') 
   temp2 = Extract(strur,'temp2')
-  
-  fig = go.Figure()
-  fig.add_trace(go.Scatter(name='temp2', x=time, y=temp2, line_shape='spline',showlegend=True))
-  fig.update_layout(height=500, width=1500)
-  graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-  
-  #print(temp1)
-  #print("aaa")
-  return render_template('success.html', temps=temp2, date = time, graphJSON = graphJSON)
+  temp3 = Extract(strur,'temp3')
+  #List = {'device1':15,'device2':20,'device3':30} 
+  List = getAllDeviceLatestTelemtry()
+  print("aaa")
+  return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items())
 
-  
+
+@app.route('/device')
+def pendel():
+  #List = {'device1':15,'device2':20,'device3':30} 
+  List = getAllDeviceLatestTelemtry()
+  return render_template('device.html',list = List.items())
+
+# latestCheck = len( temps.query.all())
+# def check():
+#   if(latestCheck != len(temps.query.all())):
+#     return True
+#   return False    
+
+@app.get("/update")
+def now():
+  strur = temps.query.order_by(temps.id.desc()).first()
+  return str(strur.temp2)
+
+
+@app.get("/api/temp2")
+def temp2():
+  strur = temps.query.all()
+  return {'temp2':Extract(strur,'temp2'), 'time':Extract(strur,'time'),'temp3':Extract(strur,'temp3'),'len':len(strur)}
+
+
+
+@app.get("/test")
+def test_1():
+  temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
+  return str(temp2)  
+
+# epsUnknow : 35
+# esp32Unknow123 : 1
+# eps32 : 15
+
+
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
+  # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
+  # thread.start()                                        #uncoment to activate alarms  
   app.run(debug=True)
 
 
