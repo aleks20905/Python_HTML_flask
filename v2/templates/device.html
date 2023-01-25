@@ -73,18 +73,18 @@
           <div class="chart-container">
             <div class="chart-info-wrapper">
               <h2>{{i}}</h2>
-              <span id = {{i}} >{{y[1]}}</span>
-            </div>
-            <div class="chart-svg">
               <div class="card {{y[0]}}">
                 <div class="card_image "> 
                   <img src="https://e0.pxfuel.com/wallpapers/599/647/desktop-wallpaper-premium-vector-of-gold-oval-frame-on-a-dark-green-tropical-leaves-vector-background-pattern-green-illustration-flower-background.jpg"> 
-                 
                 </div>
                 <div class="card_title title-white">
-                  <p id = "status">Connected</p>
+                  <p id = "{{i}}" >{{y[0]}}</p>
                 </div>
               </div>
+
+            </div>
+            <div class="chart-svg">
+              
             </div>
           </div>
         </div>
@@ -145,11 +145,11 @@
   var laterstChek = {}
         function update(){
           
-            $.get("/get/devices", function(data){
+            $.get("/get/ifConnected", function(data){
               if (JSON.stringify(laterstChek) != JSON.stringify(data)){
                 laterstChek = data;
                 for (const [key, value] of Object.entries(data)) {
-                  $("#"+ key).html(value.toFixed(1))
+                  $("#"+ key).html(value)
                 }
               }       
             });
