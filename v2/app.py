@@ -15,8 +15,8 @@ from threading import Thread
 hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
-pwd = 'postgres'
-#pwd = '123'
+#pwd = 'postgres'
+pwd = '123'
 port_id = 5432
 conn = None
 
@@ -85,8 +85,8 @@ def alarm(strname, temp):
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
-#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
 
@@ -115,9 +115,7 @@ def getListOfAllDevices():
 def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
   
-# @app.route('/')
-# def index():
-#   return render_template('index.html')
+
 
 @app.route('/')
 def show():
@@ -137,12 +135,7 @@ def pendel():
   #List = {'device1':15,'device2':20,'device3':30} 
   List = getAllDeviceLatestTelemtry()
   return render_template('device.html',list = List.items())
-
-# latestCheck = len( temps.query.all())
-# def check():
-#   if(latestCheck != len(temps.query.all())):
-#     return True
-#   return False    
+ 
 
 @app.get("/update")
 def now():
@@ -156,11 +149,14 @@ def temp2():
   return {'temp2':Extract(strur,'temp2'), 'time':Extract(strur,'time'),'temp3':Extract(strur,'temp3'),'len':len(strur)}
 
 
-
 @app.get("/test")
 def test_1():
   temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
   return str(temp2)  
+
+@app.get("/out")
+def test_out():
+  return  getAllDeviceLatestTelemtry()
 
 # epsUnknow : 35
 # esp32Unknow123 : 1
