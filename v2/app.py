@@ -110,6 +110,12 @@ def getAllDeviceLatestTelemtry():
   for i in getListOfAllDevices():
     dic[i] = float( '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().temp2) )
   return dic  
+
+def getAllDeviceLatestRespons():
+  dic = {}
+  for i in getListOfAllDevices():
+    dic[i] =  '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().time)
+  return dic 
   
 
 def getListOfAllDevices():
@@ -137,7 +143,14 @@ def show():
 @app.route('/device')
 def pendel():
   List = getAllDeviceLatestTelemtry()
-  return render_template('device.html',list = List.items())
+  a = get_ifConnected()
+  ds = [a, List]
+  d = {}
+  for k in a.keys():
+    d[k] = tuple(d[k] for d in ds)
+    
+  print(d)  
+  return render_template('device.html',state = 'disconnected',list = d.items())
  
 
 @app.get("/update")
@@ -166,13 +179,28 @@ def test_1():
 def get_devices():
   return  getAllDeviceLatestTelemtry()
 
-
 @app.get("/get/telemetry")
 def get_telemetry():
   strur = temps.query.order_by(temps.id.desc()).filter_by(device='Esp8266').first()
  
   return  {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
 
+
+@app.get("/get/latestResponse")
+def get_latestResponse():
+  return getAllDeviceLatestRespons()
+
+@app.get("/get/ifConnected")
+def get_ifConnected():
+  
+  a = getAllDeviceLatestRespons()
+  a = {i:datetime.datetime.strptime(a[i], '%Y-%m-%d %H:%M:%S.%f') for i in a} 
+  # {'Esp8266N2': datetime.datetime(2023, 1, 19, 18, 32, 29, 848165), 'Esp8266': datetime.datetime(2023, 1, 19, 19, 8, 47, 745108), 'Esp8266new': datetime.datetime(2023, 1, 19, 19, 8, 49, 751757)}
+  #print(a) 
+  for i in a:
+    a[i] = 'connected' if a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1) else 'disconnected'
+    #a[i] = a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1)
+  return a
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
