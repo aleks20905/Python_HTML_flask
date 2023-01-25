@@ -150,6 +150,11 @@ def pendel():
     
   print(d)  
   return render_template('device.html',state = 'disconnected',list = d.items())
+
+@app.route('/alarms')
+def alarms():
+  return render_template('alarms.html')
+
  
 @app.get("/update")
 def now():
