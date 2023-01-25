@@ -139,7 +139,6 @@ def show():
   print("started main")
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items())
 
-
 @app.route('/device')
 def pendel():
   List = getAllDeviceLatestTelemtry()
@@ -152,12 +151,10 @@ def pendel():
   print(d)  
   return render_template('device.html',state = 'disconnected',list = d.items())
  
-
 @app.get("/update")
 def now():
   strur = temps.query.order_by(temps.id.desc()).first()
   return str(strur.temp2)
-
 
 @app.get("/api/temp2")
 def temp2():
@@ -168,7 +165,6 @@ def temp2():
   temp3 = Extract(strur,'temp3')
   
   return {'temp2':temp2, 'time':time,'temp3':temp3,'len':len(strur)}
-
 
 @app.get("/test")
 def test_1():
@@ -184,7 +180,6 @@ def get_telemetry():
   strur = temps.query.order_by(temps.id.desc()).filter_by(device='Esp8266').first()
  
   return  {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
-
 
 @app.get("/get/latestResponse")
 def get_latestResponse():
