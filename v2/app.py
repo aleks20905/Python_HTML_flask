@@ -11,12 +11,15 @@ import time
 import datetime
 from threading import Thread
 
+# import logging
+# log = logging.getLogger('werkzeug')
+# log.setLevel(logging.ERROR)
 
 hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
-#pwd = 'postgres'
-pwd = '123'
+pwd = 'postgres'
+#pwd = '123'
 port_id = 5432
 conn = None
 
@@ -85,8 +88,8 @@ def alarm(strname, temp):
 
 app = Flask(__name__)
 
-#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
 
@@ -124,15 +127,15 @@ def show():
   time = Extract(strur,'time') 
   temp2 = Extract(strur,'temp2')
   temp3 = Extract(strur,'temp3')
+  temp4 = Extract(strur,'temp4') 
   #List = {'device1':15,'device2':20,'device3':30} 
-  List = getAllDeviceLatestTelemtry()
-  print("aaa")
+  List = get_telemetry()
+  print("started main")
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items())
 
 
 @app.route('/device')
 def pendel():
-  #List = {'device1':15,'device2':20,'device3':30} 
   List = getAllDeviceLatestTelemtry()
   return render_template('device.html',list = List.items())
  
@@ -146,7 +149,12 @@ def now():
 @app.get("/api/temp2")
 def temp2():
   strur = temps.query.all()
-  return {'temp2':Extract(strur,'temp2'), 'time':Extract(strur,'time'),'temp3':Extract(strur,'temp3'),'len':len(strur)}
+  
+  time = Extract(strur,'time') 
+  temp2 = Extract(strur,'temp2')
+  temp3 = Extract(strur,'temp3')
+  
+  return {'temp2':temp2, 'time':time,'temp3':temp3,'len':len(strur)}
 
 
 @app.get("/test")
@@ -154,14 +162,16 @@ def test_1():
   temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
   return str(temp2)  
 
-@app.get("/out")
-def test_out():
+@app.get("/get/devices")
+def get_devices():
   return  getAllDeviceLatestTelemtry()
 
-# epsUnknow : 35
-# esp32Unknow123 : 1
-# eps32 : 15
 
+@app.get("/get/telemetry")
+def get_telemetry():
+  strur = temps.query.order_by(temps.id.desc()).filter_by(device='Esp8266').first()
+ 
+  return  {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
 
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run

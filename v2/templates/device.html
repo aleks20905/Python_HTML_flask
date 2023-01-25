@@ -144,7 +144,7 @@
   var laterstChek = {}
         function update(){
           
-            $.get("/out", function(data){
+            $.get("/get/devices", function(data){
               if (JSON.stringify(laterstChek) != JSON.stringify(data)){
                 laterstChek = data;
                 for (const [key, value] of Object.entries(data)) {
