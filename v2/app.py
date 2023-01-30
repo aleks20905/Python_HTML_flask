@@ -18,8 +18,8 @@ from threading import Thread
 hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
-pwd = 'postgres'
-#pwd = '123'
+#pwd = 'postgres'
+pwd = '123'
 port_id = 5432
 conn = None
 
@@ -88,8 +88,8 @@ def alarm(strname, temp):
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
-#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
 
@@ -143,13 +143,12 @@ def show():
 def pendel():
   List = getAllDeviceLatestTelemtry()
   a = get_ifConnected()
-  ds = [a, List]
-  d = {}
-  for k in a.keys():
-    d[k] = tuple(d[k] for d in ds)
-    
-  print(d)  
-  return render_template('device.html',state = 'disconnected',list = d.items())
+  b = get_latestResponse()
+  
+  ks = [k for k in List.keys()]
+  d_merged = {k: (List[k], a[k], b[k]) for k in ks}
+  #print(d_merged)  
+  return render_template('device.html' ,list = d_merged.items())
 
 @app.route('/alarms')
 def alarms():
@@ -182,13 +181,17 @@ def get_devices():
 
 @app.get("/get/telemetry")
 def get_telemetry():
-  strur = temps.query.order_by(temps.id.desc()).filter_by(device='Esp8266').first()
- 
-  return  {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
+  strur = temps.query.order_by(temps.id.desc()).filter_by(device='eps32').first() # can bug if device doesnt exist in db
+  return {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
 
 @app.get("/get/latestResponse")
 def get_latestResponse():
-  return getAllDeviceLatestRespons()
+  a = getAllDeviceLatestRespons()
+ 
+  for i in a:
+    a[i] = a[i][:-7]
+   
+  return a
 
 @app.get("/get/ifConnected")
 def get_ifConnected():
