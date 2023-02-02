@@ -18,8 +18,8 @@ from threading import Thread
 hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
-#pwd = 'postgres'
-pwd = '123'
+pwd = 'postgres'
+#pwd = '123'
 port_id = 5432
 conn = None
 
@@ -88,11 +88,10 @@ def alarm(strname, temp):
 
 app = Flask(__name__)
 
-#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
-
 class temps(db.Model):
   __tablename__='ftest'
   id=db.Column(db.Integer,primary_key=True)
@@ -103,7 +102,6 @@ class temps(db.Model):
   temp4=db.Column(db.DECIMAL(5,2))
   state1=db.Column(db.BOOLEAN)
   time = db.Column(db.TIMESTAMP)
-
 
 def getAllDeviceLatestTelemtry():
   dic = {}
@@ -117,7 +115,6 @@ def getAllDeviceLatestRespons():
     dic[i] =  '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().time)
   return dic 
   
-
 def getListOfAllDevices():
   return set(Extract(temps.query.all(),'device'))
 
@@ -139,7 +136,7 @@ def show():
   print("started main")
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items())
 
-@app.route('/device')
+@app.route('/device') ## MAIN
 def pendel():
   List = getAllDeviceLatestTelemtry()
   a = get_ifConnected()
@@ -150,7 +147,7 @@ def pendel():
   #print(d_merged)  
   return render_template('device.html' ,list = d_merged.items())
 
-@app.route('/alarms')
+@app.route('/alarms') ## TO DO 
 def alarms():
   return render_template('alarms.html')
 
@@ -181,7 +178,7 @@ def get_devices():
 
 @app.get("/get/telemetry")
 def get_telemetry():
-  strur = temps.query.order_by(temps.id.desc()).filter_by(device='eps32').first() # can bug if device doesnt exist in db
+  strur = temps.query.order_by(temps.id.desc()).filter_by(device=list(getListOfAllDevices())[0]).first() # can bug if device doesnt exist in db
   return {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
 
 @app.get("/get/latestResponse")
