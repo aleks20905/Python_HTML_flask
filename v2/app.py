@@ -198,7 +198,7 @@ def get_ifConnected():
   # {'Esp8266N2': datetime.datetime(2023, 1, 19, 18, 32, 29, 848165), 'Esp8266': datetime.datetime(2023, 1, 19, 19, 8, 47, 745108), 'Esp8266new': datetime.datetime(2023, 1, 19, 19, 8, 49, 751757)}
   #print(a) 
   for i in a:
-    a[i] = 'connected' if a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1) else 'disconnected'
+    a[i] = 'connected' if a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1) else 'disconnected' # datetime.timedelta(minutes=1) set the time to get connected stament
     #a[i] = a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1)
   return a
 
