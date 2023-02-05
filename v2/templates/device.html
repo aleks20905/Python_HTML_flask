@@ -74,19 +74,22 @@
             <div class="chart-info-wrapper">
               <h2>{{i}}</h2>
               <p class = "title-white">{{y[2]}}</p>
+              
 
             </div>
             <div class="chart-svg">
-              <div class="card {{y[1]}}">
-                <div class="card_image "> 
-                  <img src="/static/connect.jpg"> 
+              <a href="/{{i}}">
+                <div class="card {{y[1]}}">
+                  <div class="card_image "> 
+                    <img src="/static/connect.jpg"> 
+                    
+                  </div>
+                  <div class="card_title title-white">
+                    <p id = "{{i}}" >{{y[1]}}</p>
+                    
+                  </div>
                 </div>
-                <div class="card_title title-white">
-                  <p id = "{{i}}" >{{y[1]}}</p>
-                  
-                </div>
-              </div>
-              
+              </a>
             </div>
           </div>
         </div>
