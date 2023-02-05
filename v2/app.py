@@ -122,9 +122,10 @@ def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
   
 
-
 @app.route('/')
-def show():
+@app.route('/<DeviceName>')
+def show(DeviceName=list(getListOfAllDevices())[0]):
+  #print('route somteint ###- {} -###'.format(DeviceName))
   strur = temps.query.all() #print(strur[1].id)
   
   time = Extract(strur,'time') 
@@ -132,9 +133,9 @@ def show():
   temp3 = Extract(strur,'temp3')
   temp4 = Extract(strur,'temp4') 
   #List = {'device1':15,'device2':20,'device3':30} 
-  List = get_telemetry()
+  List = get_telemetry(DeviceName)
   print("started main")
-  return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items())
+  return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items(),DeviceName = DeviceName)
 
 @app.route('/device') ## MAIN
 def pendel():
@@ -176,9 +177,10 @@ def test_1():
 def get_devices():
   return  getAllDeviceLatestTelemtry()
 
-@app.get("/get/telemetry")
-def get_telemetry():
-  strur = temps.query.order_by(temps.id.desc()).filter_by(device=list(getListOfAllDevices())[0]).first() # can bug if device doesnt exist in db
+@app.get("/get/telemetry/<name>")
+def get_telemetry(name = list(getListOfAllDevices())[0]):
+  #print('get stuff ### - {} - ####'.format(name))
+  strur = temps.query.order_by(temps.id.desc()).filter_by(device=name).first() # can bug if device doesnt exist in db
   return {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
 
 @app.get("/get/latestResponse")

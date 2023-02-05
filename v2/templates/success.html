@@ -252,7 +252,7 @@
   var laterstChek = {}
         function update(){
           
-            $.get("/get/telemetry", function(data){
+            $.get("/get/telemetry{{DeviceName}}", function(data){
               if (JSON.stringify(laterstChek) != JSON.stringify(data)){
                 laterstChek = data;
                 for (const [key, value] of Object.entries(data)) {
