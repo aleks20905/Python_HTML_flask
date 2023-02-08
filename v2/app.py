@@ -122,8 +122,8 @@ def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
   
 
-@app.route('/')
-@app.route('/<DeviceName>')
+@app.route('/device/')
+@app.route('/device/<DeviceName>')
 def show(DeviceName=list(getListOfAllDevices())[0]):
   #print('route somteint ###- {} -###'.format(DeviceName))
   strur = temps.query.all() #print(strur[1].id)
@@ -132,12 +132,11 @@ def show(DeviceName=list(getListOfAllDevices())[0]):
   temp2 = Extract(strur,'temp2')
   temp3 = Extract(strur,'temp3')
   temp4 = Extract(strur,'temp4') 
-  #List = {'device1':15,'device2':20,'device3':30} 
   List = get_telemetry(DeviceName)
   print("started main")
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items(),DeviceName = DeviceName)
 
-@app.route('/device') ## MAIN
+@app.route('/devices') ## MAIN
 def pendel():
   List = getAllDeviceLatestTelemtry()
   a = get_ifConnected()
