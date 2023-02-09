@@ -122,23 +122,24 @@ def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
   
 
-@app.route('/')
-@app.route('/<string:DeviceName>', methods=['GET', 'POST'])
-def show(DeviceName=None):
-  #print('route somteint ###- {} -###'.format(DeviceName))
-  if (DeviceName == None): DeviceName = getListOfAllDevices()[0]
+
+@app.route('/device/<DeviceName>')
+def show(DeviceName="None"):
+  print(DeviceName)
+  
+  if (DeviceName == None): DeviceName = getListOfAllDevices()[0] #print('route somteint ###- {} -###'.format(DeviceName))
   strur = temps.query.all() #print(strur[1].id)
   
   time = Extract(strur,'time') 
   temp2 = Extract(strur,'temp2')
   temp3 = Extract(strur,'temp3')
   temp4 = Extract(strur,'temp4') 
-  #List = {'device1':15,'device2':20,'device3':30} 
-  List = get_telemetry(DeviceName)
+  
+  List = get_telemetry(DeviceName) #List = {'device1':15,'device2':20,'device3':30} 
   print("started main")
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items(),DeviceName = DeviceName)
 
-@app.route('/device') ## MAIN
+@app.route('/devices') ## MAIN
 def pendel():
   List = getAllDeviceLatestTelemtry()
   a = get_ifConnected()
@@ -180,9 +181,7 @@ def get_devices():
 
 @app.get("/get/telemetry/<name>")
 def get_telemetry(name = None):
-  print(name)
-  if (name == None or name == 'favicon.ico'):
-    print("### prevented crash ??? ####")
+  if (name == None):
     name = getListOfAllDevices()[0]
   #print('get stuff ### - {} - ####'.format(name))
   strur = temps.query.order_by(temps.id.desc()).filter_by(device=name).first() # can bug if device doesnt exist in db
