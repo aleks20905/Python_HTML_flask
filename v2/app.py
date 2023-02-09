@@ -18,8 +18,8 @@ from threading import Thread
 hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
-#pwd = 'postgres'
-pwd = '123'
+pwd = 'postgres'
+#pwd = '123'
 port_id = 5432
 conn = None
 
@@ -88,8 +88,8 @@ def alarm(strname, temp):
 
 app = Flask(__name__)
 
-#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
+#app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
 
 db=SQLAlchemy(app)
 class temps(db.Model):
@@ -122,12 +122,13 @@ def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
   
 
-
+@app.route('/device/')
 @app.route('/device/<DeviceName>')
-def show(DeviceName="None"):
-  print(DeviceName)
+def show(DeviceName='None'):
   
-  if (DeviceName == None): DeviceName = getListOfAllDevices()[0] #print('route somteint ###- {} -###'.format(DeviceName))
+  #print('route somteint ###- {} -###'.format(DeviceName))
+  if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0] 
+  print(DeviceName)
   strur = temps.query.all() #print(strur[1].id)
   
   time = Extract(strur,'time') 
@@ -180,11 +181,10 @@ def get_devices():
   return  getAllDeviceLatestTelemtry()
 
 @app.get("/get/telemetry/<name>")
-def get_telemetry(name = None):
-  if (name == None):
-    name = getListOfAllDevices()[0]
+def get_telemetry(name = 'None'):
+  if (name == 'None'): name = getListOfAllDevices()[0]
   #print('get stuff ### - {} - ####'.format(name))
-  strur = temps.query.order_by(temps.id.desc()).filter_by(device=name).first() # can bug if device doesnt exist in db
+  strur = temps.query.order_by(temps.id.desc()).filter_by(device='esp8266').first() # can bug if device doesnt exist in db
   return {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
 
 @app.get("/get/latestResponse")
