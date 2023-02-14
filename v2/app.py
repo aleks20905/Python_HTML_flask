@@ -124,7 +124,9 @@ def Extract(lst,t):
 
 @app.route('/device/')
 @app.route('/device/<DeviceName>')
-def show(DeviceName=list(getListOfAllDevices())[0]):
+def show(DeviceName = 'None' ):
+  if (DeviceName == 'None'): DeviceName = list(getListOfAllDevices())[0]
+  print(DeviceName)
   #print('route somteint ###- {} -###'.format(DeviceName))
   strur = temps.query.all() #print(strur[1].id)
   
@@ -177,7 +179,8 @@ def get_devices():
   return  getAllDeviceLatestTelemtry()
 
 @app.get("/get/telemetry/<name>")
-def get_telemetry(name = list(getListOfAllDevices())[0]):
+def get_telemetry(name = 'None'):
+  if (name == 'None'): name = list(getListOfAllDevices())[0]
   #print('get stuff ### - {} - ####'.format(name))
   strur = temps.query.order_by(temps.id.desc()).filter_by(device=name).first() # can bug if device doesnt exist in db
   return {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
