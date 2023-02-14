@@ -49,7 +49,7 @@ def comment():
 #         conn.close()
   print("aaa")
 
-def alarm(strname, temp):
+def alarm_main(strname, temp):
     with psycopg2.connect(
                 host = hostname,
                 dbname = database,
@@ -102,6 +102,17 @@ class temps(db.Model):
   temp4=db.Column(db.DECIMAL(5,2))
   state1=db.Column(db.BOOLEAN)
   time = db.Column(db.TIMESTAMP)
+class alarms_sate(db.Model):
+  __tablename__='alarms'
+  id = db.Column(db.Integer,primary_key=True)
+  device =  db.Column(db.String(40))
+  temp1 =   db.Column(db.BOOLEAN) 
+  temp2 =   db.Column(db.BOOLEAN)
+  temp3 =   db.Column(db.BOOLEAN)
+  temp4 =   db.Column(db.BOOLEAN)
+  state1 =  db.Column(db.BOOLEAN)
+  globalstatus = db.Column(db.BOOLEAN)
+
 
 def getAllDeviceLatestTelemtry():
   dic = {}
@@ -116,16 +127,29 @@ def getAllDeviceLatestRespons():
   return dic 
   
 def getListOfAllDevices():
-  return set(Extract(temps.query.all(),'device'))
+  return list(set(Extract(temps.query.all(),'device')))
 
 def Extract(lst,t):
     return ['{}'.format(getattr(item,t)) for item in lst]
-  
+
+def sometingUnkown():
+  a = alarms_sate.query.all()
+  mylist = {}
+  for i in a:
+    mylist[i.device]={'temp1' :i.temp1,'temp2' :i.temp2,'temp3' :i.temp3,'temp4' :i.temp4,'state1':i.state1,'globalstatus' :i.globalstatus}
+  dic = {}
+  #print(mylist)
+  for i,y in mylist.items():
+    for b in y:
+      dic[i] = 'On' if y['globalstatus'] == True else 'Off' 
+      
+  print(dic)    
+  return dic
 
 @app.route('/device/')
 @app.route('/device/<DeviceName>')
-def show(DeviceName = 'None' ):
-  if (DeviceName == 'None'): DeviceName = list(getListOfAllDevices())[0]
+def device(DeviceName = 'None' ):
+  if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
   print(DeviceName)
   #print('route somteint ###- {} -###'.format(DeviceName))
   strur = temps.query.all() #print(strur[1].id)
@@ -139,7 +163,7 @@ def show(DeviceName = 'None' ):
   return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items(),DeviceName = DeviceName)
 
 @app.route('/devices') ## MAIN
-def pendel():
+def devices():
   List = getAllDeviceLatestTelemtry()
   a = get_ifConnected()
   b = get_latestResponse()
@@ -149,10 +173,36 @@ def pendel():
   #print(d_merged)  
   return render_template('device.html' ,list = d_merged.items())
 
-@app.route('/alarms') ## TO DO 
-def alarms():
-  return render_template('alarms.html')
 
+@app.route('/alarms/')
+def alarms():
+  ##strur = alarms_sate.query.all() #print(strur[1].id)
+  
+  
+  List = getAllDeviceLatestTelemtry()
+  #a = get_ifConnected()
+  a = sometingUnkown()
+  b = get_latestResponse()
+  
+  ks = [k for k in List.keys()]
+  d_merged = {k: (List[k], a[k], b[k]) for k in ks}
+  
+  return render_template('alarms.html', list = d_merged.items())
+
+@app.route('/alarm/')
+@app.route('/alarm/<DeviceName>') ## TO DO 
+def alarm(DeviceName = 'None'):
+  if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
+  List = getAllDeviceLatestTelemtry()
+  a = get_ifConnected()
+  b = get_latestResponse()
+  
+  ks = [k for k in List.keys()]
+  d_merged = {k: (List[k], a[k], b[k]) for k in ks}
+  
+  return render_template('alarms.html', list = d_merged.items())
+
+ 
  
 @app.get("/update")
 def now():
@@ -180,7 +230,7 @@ def get_devices():
 
 @app.get("/get/telemetry/<name>")
 def get_telemetry(name = 'None'):
-  if (name == 'None'): name = list(getListOfAllDevices())[0]
+  if (name == 'None'): name = getListOfAllDevices()[0]
   #print('get stuff ### - {} - ####'.format(name))
   strur = temps.query.order_by(temps.id.desc()).filter_by(device=name).first() # can bug if device doesnt exist in db
   return {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
