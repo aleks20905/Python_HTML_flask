@@ -66,9 +66,18 @@
         </button>
         </div>
       </div>
+
       <div class="chart-row three">
+        <!--
+          {% for count in range(0,lenth) %}
+            {% if count % 3 == 0 %}
+              <div class="chart-row three">
+            {% endif %}
+          {% endfor %}
+        -->   
 
         {%for i,y in list%} 
+        
         <div class="chart-container-wrapper">
           <div class="chart-container">
             <div class="chart-info-wrapper">
@@ -93,8 +102,10 @@
             </div>
           </div>
         </div>
+      
         {%endfor%} 
 
+      
       </div>
       <div class="chart-row two">
         

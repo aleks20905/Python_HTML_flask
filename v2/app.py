@@ -137,14 +137,28 @@ def sometingUnkown():
   mylist = {}
   for i in a:
     mylist[i.device]={'temp1' :i.temp1,'temp2' :i.temp2,'temp3' :i.temp3,'temp4' :i.temp4,'state1':i.state1,'globalstatus' :i.globalstatus}
+  
+  for i in getListOfAllDevices():
+    if (i in mylist):
+      print("its in or someting")
+    else:
+      mylist[i]={'temp1' :False,'temp2' :False,'temp3' :False,'temp4' :False,'state1':False,'globalstatus' :False}
+      print("create new alarms cuz doesnt exist")  
   dic = {}
   #print(mylist)
   for i,y in mylist.items():
     for b in y:
       dic[i] = 'On' if y['globalstatus'] == True else 'Off' 
       
-  print(dic)    
+  #print(dic)    
   return dic
+
+def dicCount():
+  dic = {}
+  for i in getListOfAllDevices():
+    dic[i] = 1
+  return dic 
+  
 
 @app.route('/device/')
 @app.route('/device/<DeviceName>')
@@ -170,7 +184,7 @@ def devices():
   
   ks = [k for k in List.keys()]
   d_merged = {k: (List[k], a[k], b[k]) for k in ks}
-  #print(d_merged)  
+  #print(d_merged) 
   return render_template('device.html' ,list = d_merged.items())
 
 
@@ -183,11 +197,12 @@ def alarms():
   #a = get_ifConnected()
   a = sometingUnkown()
   b = get_latestResponse()
+  curentConut = dicCount()
   
   ks = [k for k in List.keys()]
   d_merged = {k: (List[k], a[k], b[k]) for k in ks}
   
-  return render_template('alarms.html', list = d_merged.items())
+  return render_template('alarms.html', list = d_merged.items(),lenth = len(d_merged))
 
 @app.route('/alarm/')
 @app.route('/alarm/<DeviceName>') ## TO DO 
@@ -199,8 +214,7 @@ def alarm(DeviceName = 'None'):
   
   ks = [k for k in List.keys()]
   d_merged = {k: (List[k], a[k], b[k]) for k in ks}
-  
-  return render_template('alarms.html', list = d_merged.items())
+  return render_template('alarms.html', list = d_merged.items(),)
 
  
  
