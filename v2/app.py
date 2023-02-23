@@ -155,8 +155,10 @@ def sometingUnkown():
 
 def dicCount():
   dic = {}
+  count = 1
   for i in getListOfAllDevices():
-    dic[i] = 1
+    dic[i] = count
+    count +=1
   return dic 
   
 
@@ -181,9 +183,10 @@ def devices():
   List = getAllDeviceLatestTelemtry()
   a = get_ifConnected()
   b = get_latestResponse()
+  curentConut = dicCount()
   
   ks = [k for k in List.keys()]
-  d_merged = {k: (List[k], a[k], b[k]) for k in ks}
+  d_merged = {k: (List[k], a[k], b[k], curentConut[k]) for k in ks}
   #print(d_merged) 
   return render_template('device.html' ,list = d_merged.items())
 
@@ -200,7 +203,7 @@ def alarms():
   curentConut = dicCount()
   
   ks = [k for k in List.keys()]
-  d_merged = {k: (List[k], a[k], b[k]) for k in ks}
+  d_merged = {k: (List[k], a[k], b[k], curentConut[k]) for k in ks}
   
   return render_template('alarms.html', list = d_merged.items(),lenth = len(d_merged))
 

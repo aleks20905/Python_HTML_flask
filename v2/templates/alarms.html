@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <div class="chart-row three">
+      
         <!--
           {% for count in range(0,lenth) %}
             {% if count % 3 == 0 %}
@@ -75,10 +75,15 @@
             {% endif %}
           {% endfor %}
         -->   
-
+        <div class="chart-row three">
         {%for i,y in list%} 
+
+        {% if y[3] %4 == 0 %}
+          </div>
+          <div class="chart-row three">
+        {% endif %}
         
-        <div class="chart-container-wrapper">
+        <div class="chart-container-wrapper ">
           <div class="chart-container">
             <div class="chart-info-wrapper">
               <h2>{{i}}</h2>
@@ -100,13 +105,12 @@
                 </div>
               </a>
             </div>
+            </div>
           </div>
-        </div>
-      
-        {%endfor%} 
 
-      
-      </div>
+        {%endfor%} 
+        </div>
+
       <div class="chart-row two">
         
         <div class="chart-container-wrapper small">
@@ -156,6 +160,7 @@
 {% block javascripts %}
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 
 
 {% endblock javascripts %}
