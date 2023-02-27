@@ -188,7 +188,7 @@ def devices():
   return render_template('device.html' ,list = d_merged.items())
 
 
-@app.route('/alarms/')
+@app.route('/alarms/') ## TO DO 
 def alarms():
   ##strur = alarms_sate.query.all() #print(strur[1].id)
   
@@ -273,7 +273,7 @@ def get_ifConnected():
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
   # thread.start()                                        #uncoment to activate alarms  
-  app.run(debug=True)
+  app.run(debug=True, use_debugger=False, use_reloader=False)
 
 
 

@@ -1,0 +1,14 @@
+{
+    "python.condaPath": "c:\\Users\\Aleks\\Desktop\\Python_HTML_flask",
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
