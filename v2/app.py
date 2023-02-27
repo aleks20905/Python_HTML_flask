@@ -211,13 +211,17 @@ def alarms():
 @app.route('/alarm/<DeviceName>') ## TO DO 
 def alarm(DeviceName = 'None'):
   if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
+  
   List = getAllDeviceLatestTelemtry()
-  a = get_ifConnected()
+  #a = get_ifConnected()
+  a = sometingUnkown()
   b = get_latestResponse()
+  curentConut = dicCount()
   
   ks = [k for k in List.keys()]
-  d_merged = {k: (List[k], a[k], b[k]) for k in ks}
-  return render_template('alarms.html', list = d_merged.items(),)
+  d_merged = {k: (List[k], a[k], b[k], curentConut[k]) for k in ks}
+  
+  return render_template('alarm.html', list = d_merged.items(),lenth = len(d_merged))
 
  
  

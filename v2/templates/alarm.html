@@ -92,21 +92,12 @@
 
             </div>
             <div class="chart-svg">
-              <a href="/alarm/{{i}}">
-                <div class="card {{y[1]}}">
-                  <div class="card_image "> 
-                    <img src="/static/connect.jpg"> 
-                    
-                  </div>
-                  <div class="card_title title-white">
-                    <p id = "{{i}}" >{{y[1]}}</p>
-                    
-                  </div>
-                </div>
-              </a>
-            </div>
+                
+                <input type="range" id="volume" name="volume" min="0" max="11">
+                 
             </div>
           </div>
+        </div>
 
         {%endfor%} 
         </div>
