@@ -66,9 +66,17 @@
         </button>
         </div>
       </div>
+
+
       <div class="chart-row three">
 
         {%for i,y in list%} 
+
+        {% if y[3] %4 == 0 %}
+          </div>
+          <div class="chart-row three">
+        {% endif %}
+    
         <div class="chart-container-wrapper">
           <div class="chart-container">
             <div class="chart-info-wrapper">
