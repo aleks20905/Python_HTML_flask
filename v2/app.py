@@ -240,6 +240,20 @@ def temp2():
   
   return {'temp2':temp2, 'time':time,'temp3':temp3,'len':len(strur)}
 
+@app.get("/api/ttest/<name>")
+def temptest(name):
+  if (name == 'None' or not name in getListOfAllDevices()): name = getListOfAllDevices()[0]
+  #print( not name in getListOfAllDevices())
+  #strur = temps.query.all()
+  strur = temps.query.filter_by(device=name).all()
+  
+  time = Extract(strur,'time') 
+  temp2 = Extract(strur,'temp2')
+  temp3 = Extract(strur,'temp3')
+  
+  return {"device1":{'temp2':temp2, 'time':time,'temp3':temp3,'len':len(strur)}} 
+
+
 @app.get("/test")
 def test_1():
   temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
@@ -280,7 +294,8 @@ def get_ifConnected():
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
   # thread.start()                                        #uncoment to activate alarms  
-  app.run(debug=True, use_debugger=False, use_reloader=False)
+  #app.run(debug=True, use_debugger=False, use_reloader=False)
+  app.run(debug=True)
 
 
 
