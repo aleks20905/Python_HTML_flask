@@ -240,6 +240,7 @@ def temp2():
   
   return {'temp2':temp2, 'time':time,'temp3':temp3,'len':len(strur)}
 
+@app.get("/api/ttest")
 @app.get("/api/ttest/<name>")
 def temptest(name = 'None'):
   if (name == 'None' or not name in getListOfAllDevices()): name = getListOfAllDevices()[0]
