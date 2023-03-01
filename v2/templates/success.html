@@ -167,21 +167,37 @@
   var trace1 = {
     type: "scatter",
     mode: "lines",
-    name: 'AAPL High',
-    x:  {{date | safe }},
-    y:  {{temps | safe }},
+    name: 'trace1',
+    x:  {{telemetry['time'] | safe }},
+    y:  {{telemetry['temp1'] | safe }},
     line: {color: '#17BECF'}
   }
   var trace2 = {
     type: "scatter",
     mode: "lines",
-    name: 'AAPL Low',
-    x:  {{date | safe }},
-    y:  {{temps2 | safe }},
+    name: 'trace2',
+    x:  {{telemetry['time'] | safe }},
+    y:  {{telemetry['temp2'] | safe }},
     line: {color: '#7F7F7F'}
   }
-  var data = [trace1,trace2];
-      
+  var trace3 = {
+    type: "scatter",
+    mode: "lines",
+    name: 'trace3',
+    x:  {{telemetry['time'] | safe }},
+    y:  {{telemetry['temp3'] | safe }},
+    line: {color: '#7F7F7F'}
+  }
+  var trace4 = {
+    type: "scatter",
+    mode: "lines",
+    name: 'trace4',
+    x:  {{telemetry['time'] | safe }},
+    y:  {{telemetry['temp4'] | safe }},
+    line: {color: '#7F7F7F'}
+  }
+  var data = [trace1, trace2, trace3, trace4];
+            
   var layout = {
     margin: {
       l: 20,
@@ -199,25 +215,41 @@
   var latestLen = 0;
   function updates(){
 
-    $.get("/api/temp2", function(data){
+    $.get("/api/ttest/{{DeviceName}}", function(data){
       //console.log(data['data']);
       var trace1 = {
         type: "scatter",
         mode: "lines",
-        name: 'AAPL High',
+        name: 'trace1',
         x:  data['time'],
-        y:  data['temp2'],
+        y:  data['temp1'],
         line: {color: '#17BECF'}
       }
       var trace2 = {
         type: "scatter",
         mode: "lines",
-        name: 'AAPL Low',
+        name: 'trace2',
+        x:  data['time'],
+        y:  data['temp2'],
+        line: {color: '#7F7F7F'}
+      }
+      var trace3 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'trace3',
         x:  data['time'],
         y:  data['temp3'],
         line: {color: '#7F7F7F'}
       }
-      var data = [trace1,trace2];
+      var trace4 = {
+        type: "scatter",
+        mode: "lines",
+        name: 'trace4',
+        x:  data['time'],
+        y:  data['temp4'],
+        line: {color: '#7F7F7F'}
+      }
+      var data = [trace1, trace2, trace3, trace4];
           
       var layout = {
         margin: {
@@ -236,7 +268,7 @@
       if (data['len']!=latestLen){
         latestLen = data['len']
         Plotly.plot('line-chart', data, layout, {responsive: true});
-        Plotly.deleteTraces('line-chart',[0,1]);
+        Plotly.deleteTraces('line-chart',[0,1,2,3]);
       }
       
     });
