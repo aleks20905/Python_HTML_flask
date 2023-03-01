@@ -173,7 +173,6 @@ def device(DeviceName = 'None' ):
   # temp2 = Extract(strur,'temp2')
   # temp3 = Extract(strur,'temp3')
   # temp4 = Extract(strur,'temp4') 
-  print(range(1,5))
   telemetry =  temptest(DeviceName)
   List = get_telemetry(DeviceName)
   print("started main")
