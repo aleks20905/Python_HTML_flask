@@ -126,34 +126,34 @@ def getAllDeviceLatestRespons():
     dic[i] =  '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().time)
   return dic 
   
-def getListOfAllDevices():
+def getListOfAllDevices(): # return list of all devices in DBtemp/ftest
   return list(set(Extract(temps.query.all(),'device')))
 
-def Extract(lst,t):
-    return ['{}'.format(getattr(item,t)) for item in lst]
+def Extract(lst,t): # extrakt data from db Extrakt(temps.query.all(),'time')
+  # lst = from where to extrakt || t = what to extrakt
+  return ['{}'.format(getattr(item,t)) for item in lst]
 
-def sometingUnkown():
+def globalstatus_alarms(): # return globalstatus Alarm dict with all devices
   a = alarms_sate.query.all()
   mylist = {}
   for i in a:
     mylist[i.device]={'temp1' :i.temp1,'temp2' :i.temp2,'temp3' :i.temp3,'temp4' :i.temp4,'state1':i.state1,'globalstatus' :i.globalstatus}
   
-  for i in getListOfAllDevices():
-    if (i in mylist):
-      print("its in or someting")
-    else:
+  for i in getListOfAllDevices(): # chek if all devices in DBalarms_sate are in DBtemps 
+    if (i not in mylist):         # and if not it create virtial just for buffer just to NOT CRASH !!!
       mylist[i]={'temp1' :False,'temp2' :False,'temp3' :False,'temp4' :False,'state1':False,'globalstatus' :False}
-      print("create new alarms cuz doesnt exist")  
+      print("create new alarms cuz doesnt exist")
+        
   dic = {}
   #print(mylist)
-  for i,y in mylist.items():
+  for i,y in mylist.items(): # conver the the dict from False/True to Off/On
     for b in y:
       dic[i] = 'On' if y['globalstatus'] == True else 'Off' 
       
   #print(dic)    
-  return dic
+  return dic # return dict with all devices: globalstatus || {device: Off/On, device: Off/On}
 
-def dicCount():
+def dicCount(): # return dict with device: count || {device1: 1, devic2: 2}
   dic = {}
   count = 1
   for i in getListOfAllDevices():
@@ -198,7 +198,7 @@ def alarms():
   
   List = getAllDeviceLatestTelemtry()
   #a = get_ifConnected()
-  a = sometingUnkown()
+  a = globalstatus_alarms()
   b = get_latestResponse()
   curentConut = dicCount()
   
@@ -214,7 +214,7 @@ def alarm(DeviceName = 'None'):
   
   List = getAllDeviceLatestTelemtry()
   #a = get_ifConnected()
-  a = sometingUnkown()
+  a = globalstatus_alarms()
   b = get_latestResponse()
   curentConut = dicCount()
   
@@ -245,9 +245,6 @@ def test_1():
   temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
   return str(temp2)  
 
-@app.get("/get/devices")
-def get_devices():
-  return  getAllDeviceLatestTelemtry()
 
 @app.get("/get/telemetry/<name>")
 def get_telemetry(name = 'None'):
