@@ -2,6 +2,8 @@
 <html lang="en">
   <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/rangeStyle.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <link rel="stylesheet" type="text/css" href="/static/cardStyle.css">
 <head>
@@ -66,15 +68,7 @@
         </button>
         </div>
       </div>
-
-      
-        <!--
-          {% for count in range(0,lenth) %}
-            {% if count % 3 == 0 %}
-              <div class="chart-row three">
-            {% endif %}
-          {% endfor %}
-        -->   
+   
         <div class="chart-row three">
         {%for i,y in list%} 
 
@@ -91,11 +85,14 @@
               
 
             </div>
-            <div class="chart-svg">
-                
-                <input type="range" id="volume" name="volume" min="0" max="11">
-                 
-            </div>
+            <div class="slider-container">
+              <input type="range" step="5" min="0" max="100" value="50" class="slider">
+              <spam id="slider-value"></spam>
+
+              <input class = "slider-button" type="button" value="submit" />
+              
+              
+            </div>    
           </div>
         </div>
 
@@ -152,6 +149,35 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+<script>
+  
+  document.querySelectorAll('.slider-container').forEach(el => {
+    const container = el;
+    let slider = el.querySelector('.slider'),
+      sliderValue = el.querySelector('#slider-value');
+      
+
+  slider.oninput = function() {
+    showValue();
+  }
+
+  function showValue() {  
+    sliderValue.innerHTML = slider.value;
+    var sliderPosition = ( slider.value / slider.max )
+    
+    if(slider.value === slider.min) {
+      sliderValue.style.left = ((sliderPosition * 100)  + 2 ) + "%";
+    }
+    else if ( slider.value === slider.max) {
+      sliderValue.style.left =  ((sliderPosition * 100) - 2 ) + "%";
+    } 
+    else {
+      sliderValue.style.left = ((sliderPosition * 100)) + "%";
+    }
+  }
+  });
+
+</script>
 
 
 {% endblock javascripts %}
