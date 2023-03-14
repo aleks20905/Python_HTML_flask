@@ -166,17 +166,17 @@ def dicCount(): # return dict with device: count || {device1: 1, devic2: 2}
 @app.route('/device/<DeviceName>')
 def device(DeviceName = 'None' ):
   if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
-  print(DeviceName)
   #print('route somteint ###- {} -###'.format(DeviceName))
-  strur = temps.query.all() #print(strur[1].id)
+  #strur = temps.query.all() #print(strur[1].id)
   
-  time = Extract(strur,'time') 
-  temp2 = Extract(strur,'temp2')
-  temp3 = Extract(strur,'temp3')
-  temp4 = Extract(strur,'temp4') 
+  # time = Extract(strur,'time') 
+  # temp2 = Extract(strur,'temp2')
+  # temp3 = Extract(strur,'temp3')
+  # temp4 = Extract(strur,'temp4') 
+  telemetry =  temptest(DeviceName)
   List = get_telemetry(DeviceName)
   print("started main")
-  return render_template('success.html', temps=temp2, temps2=temp3, date = time, list = List.items(),DeviceName = DeviceName)
+  return render_template('success.html',telemetry = telemetry, list = List.items(),DeviceName = DeviceName)
 
 @app.route('/devices') ## MAIN
 def devices():
@@ -240,6 +240,23 @@ def temp2():
   
   return {'temp2':temp2, 'time':time,'temp3':temp3,'len':len(strur)}
 
+@app.get("/api/ttest")
+@app.get("/api/ttest/<name>")
+def temptest(name = 'None'):
+  if (name == 'None' or not name in getListOfAllDevices()): name = getListOfAllDevices()[0]
+  #print( not name in getListOfAllDevices())
+  #strur = temps.query.all()
+  strur = temps.query.filter_by(device=name).all()
+  
+  time = Extract(strur,'time') 
+  temp1 = Extract(strur,'temp1')
+  temp2 = Extract(strur,'temp2')
+  temp3 = Extract(strur,'temp3')
+  temp4 = Extract(strur,'temp4')
+  
+  return {'temp1':temp1,'temp2':temp2, 'time':time,'temp3':temp3, 'temp4': temp4,'len':len(strur)}
+
+
 @app.get("/test")
 def test_1():
   temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
@@ -277,7 +294,8 @@ def get_ifConnected():
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
   # thread.start()                                        #uncoment to activate alarms  
-  app.run(debug=True, use_debugger=False, use_reloader=False)
+  #app.run(debug=True, use_debugger=False, use_reloader=False)
+  app.run(debug=True)
 
 
 
