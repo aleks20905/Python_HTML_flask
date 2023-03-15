@@ -46,7 +46,7 @@ def handle_client(conn, addr):
         while connected:    
             fmsg = ""
             try:
-                fmsg = conn.recv(100).decode(FORMAT)
+                fmsg = conn.recv(110).decode(FORMAT)
                 #print('ADASDASDA ASDA '+ fmsg)
                 if fmsg and fmsg[:1]=='&':   
                       
@@ -61,8 +61,8 @@ def handle_client(conn, addr):
                     with con.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
 
                             
-                        insert_script  = 'INSERT INTO ftest (device, temp2, temp3, temp4, state1, time) VALUES ( %s, %s, %s, %s, %s, %s)'
-                        insert_values = (telemetry["device"],telemetry["temp2"],telemetry["temp3"],telemetry["temp4"],telemetry["state1"],datetime.now())
+                        insert_script  = 'INSERT INTO ftest (device, temp1, temp2, temp3, temp4, state1, time) VALUES (  %s, %s, %s, %s, %s, %s, %s)'
+                        insert_values = (telemetry["device"],telemetry["temp1"],telemetry["temp2"],telemetry["temp3"],telemetry["temp4"],telemetry["state1"],datetime.now())
                                 
                         cur.execute(insert_script, insert_values)   
                     con.commit()

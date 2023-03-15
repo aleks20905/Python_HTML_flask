@@ -51,6 +51,7 @@ void loop() {
   if (client.connected()) {
 
     sendString("device", "Esp8266");
+    sendfloat("temp1", random(0,100));
     sendfloat("temp2", random(0,100));
     sendfloat("temp3", random(-30,30));
     sendfloat("temp4", random(10,70));
