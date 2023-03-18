@@ -50,7 +50,7 @@ def comment():
   print("aaa")
 
 def alarm_main(strname, temp):
-    with psycopg2.connect(
+  with psycopg2.connect(
                 host = hostname,
                 dbname = database,
                 user = username,
@@ -83,8 +83,8 @@ def alarm_main(strname, temp):
                         
                 time.sleep(2)
                 
-    if conn is not None:
-        conn.close()
+  if conn is not None:
+    conn.close()
 
 app = Flask(__name__)
 
@@ -176,7 +176,7 @@ def device(DeviceName = 'None' ):
   telemetry =  temptest(DeviceName)
   List = get_telemetry(DeviceName)
   print("started main")
-  return render_template('success.html',telemetry = telemetry, list = List.items(),DeviceName = DeviceName)
+  return render_template('device.html',telemetry = telemetry, list = List.items(),DeviceName = DeviceName)
 
 @app.route('/devices') ## MAIN
 def devices():
@@ -188,7 +188,7 @@ def devices():
   ks = [k for k in List.keys()]
   d_merged = {k: (List[k], a[k], b[k], curentConut[k]) for k in ks}
   #print(d_merged) 
-  return render_template('device.html' ,list = d_merged.items())
+  return render_template('devices.html' ,list = d_merged.items())
 
 
 @app.route('/alarms/') ## TO DO 
@@ -295,7 +295,7 @@ if __name__ == '__main__':  #python interpreter assigns "__main__" to the file y
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
   # thread.start()                                        #uncoment to activate alarms  
   #app.run(debug=True, use_debugger=False, use_reloader=False)
-  app.run(debug=True)
+  app.run(host='0.0.0.0', port=5000,debug=True)
 
 
 

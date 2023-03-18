@@ -21,17 +21,15 @@ try:
 
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
 
-            cur.execute('DROP TABLE IF EXISTS ftest')
+            cur.execute('DROP TABLE IF EXISTS alarmsValue')
 
-            create_script = ''' CREATE TABLE IF NOT EXISTS ftest (
-                                                id                        int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-                                                device           TEXT,
-                                                temp1            NUMERIC(5,2),
-                                                temp2            NUMERIC(5,2),
-                                                temp3            NUMERIC(5,2),
-                                                temp4            NUMERIC(5,2),
-                                                state1           BOOLEAN,
-                                                time             TIMESTAMP) '''
+            create_script = ''' CREATE TABLE IF NOT EXISTS alarmsValue (
+                                    id      int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                                    device  TEXT,
+                                    temp1   NUMERIC(5,2),
+                                    temp2   NUMERIC(5,2),
+                                    temp3   NUMERIC(5,2),
+                                    temp4   NUMERIC(5,2)) '''
             cur.execute(create_script)    
                    
 except Exception as error:

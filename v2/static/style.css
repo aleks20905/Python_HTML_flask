@@ -246,6 +246,7 @@ button {
 }
 
 .chart-info-wrapper {
+  z-index: 1;
   flex-shrink: 0;
   flex-basis: 120px;
 }
@@ -265,8 +266,8 @@ button {
 
 .chart-svg {
   position: relative;
-  max-width: 90px;
-  min-width: 40px;
+  max-width: 200px;
+  min-width: 60px;
   flex: 1;
 }
 
@@ -461,7 +462,7 @@ button {
     width: calc(50% - 8px);
   }
 }
-@media screen and (max-width: 920px) {
+@media screen and (max-width: 960px) {
   .menu-button {
     display: flex;
   }
@@ -481,7 +482,7 @@ button {
     display: flex;
   }
 }
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 730px) {
   .chart-row.three {
     flex-direction: column;
   }
@@ -492,7 +493,7 @@ button {
 
   .chart-svg {
     min-height: 60px;
-    min-width: 40px;
+    min-width: 60px;
   }
 }
 @media screen and (max-width: 520px) {
