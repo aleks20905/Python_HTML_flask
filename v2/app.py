@@ -112,7 +112,14 @@ class alarms_sate(db.Model):
   temp4 =   db.Column(db.BOOLEAN)
   state1 =  db.Column(db.BOOLEAN)
   globalstatus = db.Column(db.BOOLEAN)
-
+class alamrs_value(db.Model):
+  __tablename__='alarmsvalue'
+  id=db.Column(db.Integer,primary_key=True)
+  device=db.Column(db.String(40))
+  temp1=db.Column(db.DECIMAL(5,2))
+  temp2=db.Column(db.DECIMAL(5,2))
+  temp3=db.Column(db.DECIMAL(5,2))
+  temp4=db.Column(db.DECIMAL(5,2))
 
 def getAllDeviceLatestTelemtry():
   dic = {}
@@ -161,6 +168,19 @@ def dicCount(): # return dict with device: count || {device1: 1, devic2: 2}
     count +=1
   return dic 
   
+def alarms_values_list():
+  a = alamrs_value.query.all()
+  
+  mylist = {}
+  for i in a:
+    mylist[i.device]={'temp1' :i.temp1,'temp2' :i.temp2,'temp3' :i.temp3,'temp4' :i.temp4}
+  
+  for i in getListOfAllDevices(): # chek if all devices in DBalarms_sate are in DBtemps 
+    if (i not in mylist):         # and if not it create virtial just for buffer just to NOT CRASH !!!
+      mylist[i]={'temp1' :None,'temp2' :None,'temp3' :None,'temp4' :None}
+      print("create new alarms cuz doesnt exist")
+      
+  return mylist
 
 @app.route('/device/')
 @app.route('/device/<DeviceName>')
@@ -221,7 +241,7 @@ def alarm(DeviceName = 'None'):
   ks = [k for k in List.keys()]
   d_merged = {k: (List[k], a[k], b[k], curentConut[k]) for k in ks}
   
-  return render_template('alarm.html', list = d_merged.items(),lenth = len(d_merged))
+  return render_template('alarm.html', list = d_merged.items(),lenth = len(d_merged),DeviceName = DeviceName)
 
  
  
@@ -294,8 +314,8 @@ def get_ifConnected():
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
   # thread.start()                                        #uncoment to activate alarms  
-  #app.run(debug=True, use_debugger=False, use_reloader=False)
-  app.run(host='0.0.0.0', port=5000,debug=True)
+  #app.run(host='0.0.0.0', port=5000,debug=True)
+  app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
 
 
 
