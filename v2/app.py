@@ -231,15 +231,20 @@ def alarms():
 @app.route('/alarm/<DeviceName>') ## TO DO 
 def alarm(DeviceName = 'None'):
   if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
-  
-  List = getAllDeviceLatestTelemtry()
-  #a = get_ifConnected()
-  a = globalstatus_alarms()
-  b = get_latestResponse()
-  curentConut = dicCount()
-  
-  ks = [k for k in List.keys()]
-  d_merged = {k: (List[k], a[k], b[k], curentConut[k]) for k in ks}
+
+  if (alamrs_value.query.filter_by(device=DeviceName).first() is None): # if device doest exist in alarms_value
+    print("alamrs_value add new element")
+    user = alamrs_value(device = DeviceName ,temp1='50', temp2='50',temp3='50',temp4='50') 
+    db.session.add(user)
+    db.session.commit() 
+   
+  srt = alamrs_value.query.filter_by(device=DeviceName).first()
+  d_merged = {
+    "temp1": (None, 'On', srt.temp1, 1),
+    "temp2": (None, 'On', srt.temp2, 2),
+    "temp3": (None, 'On', srt.temp3, 3),
+    "temp4": (None, 'On', srt.temp4, 4),
+              }
   
   return render_template('alarm.html', list = d_merged.items(),lenth = len(d_merged),DeviceName = DeviceName)
 
