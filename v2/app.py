@@ -49,43 +49,27 @@ def comment():
 #         conn.close()
   print("aaa")
 
-def alarm_main(strname, temp):
-  with psycopg2.connect(
-                host = hostname,
-                dbname = database,
-                user = username,
-                password = pwd,
-                port = port_id) as conn:
-
-        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-    
-            while True:
-                cur.execute('''SELECT * FROM ftest
-                                    WHERE time BETWEEN '{}' and '{}'  
-                                    ORDER BY id DESC'''.format(datetime.datetime.now() - datetime.timedelta(minutes=6) , datetime.datetime.now()))#set time to search in db
-                            
-                a= cur.fetchall()
-                count= 0
-                print(".") #printing ......
+def alarm_main(DeviceName,strname, temp):
+       
+  a = temps.query.filter_by(device=DeviceName).filter(temps.time>=datetime.datetime.now() - datetime.timedelta(minutes=6)).all() # fetch all data for the last 6 min
+  count= 0
+  print(".") #printing ......
+  
+  for i in a:
+      
+      if i[strname]>temp:
+          count+=1
+          #print(i )#-datetime.timedelta(seconds=5) 
+                      
+      if len(a)*0.7<count:
+          #requests.post("https://api.telegram.org/bot5495441993:AAFy_9ujooWqi5ZH2PiMXCAXoxxf6ZkvUeY/sendMessage?chat_id=-1001683799597&text={} {}".format(strname,datetime.datetime.now()))
+          #print("aa")        #do someting
+          print("well ") 
+          print(len(a),count,len(a)*0.7<count) 
+          time.sleep(30)
+          
+  time.sleep(2)
                 
-                for i in a:
-                    
-                    if i[strname]>temp:
-                        count+=1
-                        #print(i )#-datetime.timedelta(seconds=5) 
-                                    
-                    if len(a)*0.7<count:
-                        #requests.post("https://api.telegram.org/bot5495441993:AAFy_9ujooWqi5ZH2PiMXCAXoxxf6ZkvUeY/sendMessage?chat_id=-1001683799597&text={} {}".format(strname,datetime.datetime.now()))
-                        #print("aa")        #do someting
-                        print("well ") 
-                        print(len(a),count,len(a)*0.7<count) 
-                        time.sleep(30)
-                        
-                time.sleep(2)
-                
-  if conn is not None:
-    conn.close()
-
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
@@ -231,8 +215,8 @@ def alarms():
 @app.route('/alarm/<DeviceName>') ## TO DO 
 def alarm(DeviceName = 'None'):
   if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
-
-  if (alamrs_value.query.filter_by(device=DeviceName).first() is None): # if device doest exist in alarms_value
+  
+  if (alamrs_value.query.filter_by(device=DeviceName).first() is None): # if device doest exist in alarms_value it creates one
     print("alamrs_value add new element")
     user = alamrs_value(device = DeviceName ,temp1='50', temp2='50',temp3='50',temp4='50') 
     db.session.add(user)
@@ -320,6 +304,8 @@ if __name__ == '__main__':  #python interpreter assigns "__main__" to the file y
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
   # thread.start()                                        #uncoment to activate alarms  
   #app.run(host='0.0.0.0', port=5000,debug=True)
+  
+  db.create_all() # create new tables if needed
   app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
 
 
