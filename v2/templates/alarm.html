@@ -80,12 +80,12 @@
 
             </div>
             <div class="slider-container">
-              <input type="range" step="5" min="0" max="100" value="{{y[2]}}" class="slider">
-              <spam id="slider-value"></spam>
-
-              <input class = "slider-button" type="button" value="submit" />
               
-              
+                <form method="POST" action="/alarm/{{DeviceName}}">
+                  <input type="range" name = {{i}} placeholder =  {{i}} step="5" min="0" max="100" value="{{y[2]}}" class="slider">
+                  <spam id="slider-value"></spam>
+                  <input class = "slider-button" type="submit" value="submit" >
+                </form>
             </div>    
           </div>
         </div>

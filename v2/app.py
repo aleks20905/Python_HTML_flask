@@ -1,4 +1,4 @@
-from flask import Flask,jsonify, render_template, request
+from flask import Flask,jsonify, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import plotly
 import plotly_express as px
@@ -212,9 +212,15 @@ def alarms():
   return render_template('alarms.html', list = d_merged.items(),lenth = len(d_merged))
 
 @app.route('/alarm/')
-@app.route('/alarm/<DeviceName>') ## TO DO 
+@app.route('/alarm/<DeviceName>', methods=['POST','GET']) ## TO DO 
 def alarm(DeviceName = 'None'):
   if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
+  
+  if request.method == 'POST':
+    arg = request.form
+    
+    print(arg)
+    
   
   if (alamrs_value.query.filter_by(device=DeviceName).first() is None): # if device doest exist in alarms_value it creates one
     print("alamrs_value add new element")
@@ -232,8 +238,8 @@ def alarm(DeviceName = 'None'):
   
   return render_template('alarm.html', list = d_merged.items(),lenth = len(d_merged),DeviceName = DeviceName)
 
- 
- 
+
+
 @app.get("/update")
 def now():
   strur = temps.query.order_by(temps.id.desc()).first()
@@ -303,10 +309,11 @@ def get_ifConnected():
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
   # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
   # thread.start()                                        #uncoment to activate alarms  
-  #app.run(host='0.0.0.0', port=5000,debug=True)
+  
   
   db.create_all() # create new tables if needed
-  app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
+  app.run(host='0.0.0.0', port=5000,debug=True)
+  #app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
 
 
 
