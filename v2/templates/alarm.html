@@ -6,11 +6,24 @@
     <link rel="stylesheet" type="text/css" href="/static/rangeStyle.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <link rel="stylesheet" type="text/css" href="/static/cardStyle.css">
+    <link rel="stylesheet" type="text/css" href="/static/alertPopup.css">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+  {%with messages = get_flashed_messages(with_categories=true) %}
+  {%if messages%}
+  {% for category, message in messages %}
+    
+    <div class="alert {{category}}" >
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"> × </span> 
+      {{message}}
+    </div>
+    
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
   <div class="app-container">
     <div class="app-left">
       <button class="close-menu">
@@ -62,8 +75,8 @@
         </button>
         </div>
       </div>
-   
-        <div class="chart-row three">
+         
+      <div class="chart-row three">
         {%for i,y in list%} 
 
         {% if y[3] %4 == 0 %}

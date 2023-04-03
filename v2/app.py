@@ -1,4 +1,4 @@
-from flask import Flask,jsonify, render_template, request, redirect, url_for
+from flask import Flask,jsonify, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 import plotly
 import plotly_express as px
@@ -71,6 +71,7 @@ def alarm_main(DeviceName,strname, temp):
   time.sleep(2)
                 
 app = Flask(__name__)
+app.secret_key = "padeaznam"
 
 app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost:5432/iotBrick'  
 #app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:123@localhost:5432/iotBrick'  
@@ -215,25 +216,27 @@ def alarms():
 @app.route('/alarm/<DeviceName>', methods=['POST','GET']) ## TO DO 
 def alarm(DeviceName = 'None'):
   if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
-  
+  d_base = alamrs_value.query.filter_by(device=DeviceName).first()
+
   if request.method == 'POST':
-    arg = request.form
+    req_form = request.form.to_dict() # request form the site gets the atribute and returns dict of it
+    for i,y in req_form.items(): # using req_form updates the DB 
+      setattr(d_base, i, y) #this secificli update the DB (ref_to_DB, atribute_name, atribute_value)
+      db.session.commit()
+      flash("deta update succesfuly","success")  
+      
     
-    print(arg)
-    
-  
-  if (alamrs_value.query.filter_by(device=DeviceName).first() is None): # if device doest exist in alarms_value it creates one
+  if (d_base is None): # if device doest exist in alarms_value it creates one
     print("alamrs_value add new element")
     user = alamrs_value(device = DeviceName ,temp1='50', temp2='50',temp3='50',temp4='50') 
     db.session.add(user)
     db.session.commit() 
    
-  srt = alamrs_value.query.filter_by(device=DeviceName).first()
   d_merged = {
-    "temp1": (None, 'On', srt.temp1, 1),
-    "temp2": (None, 'On', srt.temp2, 2),
-    "temp3": (None, 'On', srt.temp3, 3),
-    "temp4": (None, 'On', srt.temp4, 4),
+    "temp1": (None, 'On', d_base.temp1, 1),
+    "temp2": (None, 'On', d_base.temp2, 2),
+    "temp3": (None, 'On', d_base.temp3, 3),
+    "temp4": (None, 'On', d_base.temp4, 4),
               }
   
   return render_template('alarm.html', list = d_merged.items(),lenth = len(d_merged),DeviceName = DeviceName)
