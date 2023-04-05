@@ -19,7 +19,6 @@ hostname = 'localhost'
 database = 'iotBrick'
 username = 'postgres'
 pwd = 'postgres'
-#pwd = '123'
 port_id = 5432
 conn = None
 
@@ -185,6 +184,7 @@ def device(DeviceName = 'None' ):
 
 @app.route('/devices') ## MAIN
 def devices():
+  db.create_all() # create new tables if needed
   List = getAllDeviceLatestTelemtry()
   a = get_ifConnected()
   b = get_latestResponse()
@@ -216,6 +216,7 @@ def alarms():
 @app.route('/alarm/<DeviceName>', methods=['POST','GET']) ## TO DO 
 def alarm(DeviceName = 'None'):
   if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
+  db.create_all() # create new tables if needed
   d_base = alamrs_value.query.filter_by(device=DeviceName).first()
 
   if request.method == 'POST':
@@ -223,6 +224,7 @@ def alarm(DeviceName = 'None'):
     for i,y in req_form.items(): # using req_form updates the DB 
       setattr(d_base, i, y) #this secificli update the DB (ref_to_DB, atribute_name, atribute_value)
       db.session.commit()
+      
       flash("deta update succesfuly","success")  
       
     
@@ -231,7 +233,8 @@ def alarm(DeviceName = 'None'):
     user = alamrs_value(device = DeviceName ,temp1='50', temp2='50',temp3='50',temp4='50') 
     db.session.add(user)
     db.session.commit() 
-   
+    d_base =  alamrs_value.query.filter_by(device=DeviceName).first()
+  
   d_merged = {
     "temp1": (None, 'On', d_base.temp1, 1),
     "temp2": (None, 'On', d_base.temp2, 2),
@@ -314,7 +317,7 @@ if __name__ == '__main__':  #python interpreter assigns "__main__" to the file y
   # thread.start()                                        #uncoment to activate alarms  
   
   
-  db.create_all() # create new tables if needed
+  
   app.run(host='0.0.0.0', port=5000,debug=True)
   #app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
 
