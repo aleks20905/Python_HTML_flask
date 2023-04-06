@@ -35,7 +35,38 @@ def alarm_main(DeviceName,strname, temp):
           time.sleep(30)
           
   time.sleep(2)
-                
+
+def test_alarm():
+  
+  db_alarm_state = alarms_sate.query.all()
+  alarm_state = []
+  for rec in db_alarm_state:
+    alarm_state.append({"device":rec.device, 'temp1' :rec.temp1,'temp2' :rec.temp2,'temp3' :rec.temp3,'temp4' :rec.temp4,'globalstatus':rec.globalstatus})
+  all_on_devices = [ sub['device'] for sub in alarm_state if sub["globalstatus"]] # list of all devices witch alarms_state is turn 'On'
+  
+  
+  all_records = temps.query.filter(temps.device.in_(all_on_devices)).filter(temps.time>=datetime.datetime.now() - datetime.timedelta(days=25)).all() # fetch all data for the last 6 min
+  mylist = [{"device": rec.device, 'temp1': rec.temp1, 'temp2': rec.temp2, 'temp3': rec.temp3, 'temp4': rec.temp4} for rec in all_records]
+  db_alarm_value = alamrs_value.query.all()
+  alarm_value = {i.device: {'temp1': i.temp1, 'temp2': i.temp2, 'temp3': i.temp3, 'temp4': i.temp4} for i in db_alarm_value}
+  
+  for i in mylist:
+    print(i['temp1'])
+    print(alarm_value[i['device']]['temp1'])
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  if not all_records:
+    print("EMPty")
+  
+ 
+            
 app = Flask(__name__)
 app.secret_key = "padeaznam"
 
@@ -74,18 +105,18 @@ class alamrs_value(db.Model):
 
 def getAllDeviceLatestTelemtry():
   dic = {}
-  for i in getListOfAllDevices():
+  for i in get_all_devices(temps.query.all()):
     dic[i] = float( '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().temp2) )
   return dic  
 
 def getAllDeviceLatestRespons():
   dic = {}
-  for i in getListOfAllDevices():
+  for i in get_all_devices(temps.query.all()):
     dic[i] =  '{}'.format(temps.query.order_by(temps.id.desc()).filter_by(device=i).first().time)
   return dic 
   
-def getListOfAllDevices(): # return list of all devices in DBtemp/ftest
-  return list(set(Extract(temps.query.all(),'device')))
+def get_all_devices(db): # return list of all devices in selected db "DBtemp/ftest"
+  return list(set(Extract(db,'device')))
 
 def Extract(lst,t): # extrakt data from db Extrakt(temps.query.all(),'time')
   # lst = from where to extrakt || t = what to extrakt
@@ -97,7 +128,7 @@ def globalstatus_alarms(): # return globalstatus Alarm dict with all devices
   for i in a:
     mylist[i.device]={'temp1' :i.temp1,'temp2' :i.temp2,'temp3' :i.temp3,'temp4' :i.temp4,'state1':i.state1,'globalstatus' :i.globalstatus}
   
-  for i in getListOfAllDevices(): # chek if all devices in DBalarms_sate are in DBtemps 
+  for i in get_all_devices(temps.query.all()): # chek if all devices in DBalarms_sate are in DBtemps 
     if (i not in mylist):         # and if not it create virtial just for buffer just to NOT CRASH !!!
       mylist[i]={'temp1' :False,'temp2' :False,'temp3' :False,'temp4' :False,'state1':False,'globalstatus' :False}
       print("create new alarms cuz doesnt exist")
@@ -114,7 +145,7 @@ def globalstatus_alarms(): # return globalstatus Alarm dict with all devices
 def dicCount(): # return dict with device: count || {device1: 1, devic2: 2}
   dic = {}
   count = 1
-  for i in getListOfAllDevices():
+  for i in get_all_devices(temps.query.all()):
     dic[i] = count
     count +=1
   return dic 
@@ -126,7 +157,7 @@ def alarms_values_list():
   for i in a:
     mylist[i.device]={'temp1' :i.temp1,'temp2' :i.temp2,'temp3' :i.temp3,'temp4' :i.temp4}
   
-  for i in getListOfAllDevices(): # chek if all devices in DBalarms_sate are in DBtemps 
+  for i in get_all_devices(temps.query.all()): # chek if all devices in DBalarms_sate are in DBtemps 
     if (i not in mylist):         # and if not it create virtial just for buffer just to NOT CRASH !!!
       mylist[i]={'temp1' :None,'temp2' :None,'temp3' :None,'temp4' :None}
       print("create new alarms cuz doesnt exist")
@@ -136,7 +167,7 @@ def alarms_values_list():
 @app.route('/device/')
 @app.route('/device/<DeviceName>')
 def device(DeviceName = 'None' ):
-  if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
+  if (DeviceName == 'None'): DeviceName = get_all_devices(temps.query.all())[0]
   #print('route somteint ###- {} -###'.format(DeviceName))
   #strur = temps.query.all() #print(strur[1].id)
   
@@ -182,7 +213,7 @@ def alarms():
 @app.route('/alarm/')
 @app.route('/alarm/<DeviceName>', methods=['POST','GET']) 
 def alarm(DeviceName = 'None'):
-  if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
+  if (DeviceName == 'None'): DeviceName = get_all_devices(temps.query.all())[0]
   db.create_all() # create new tables if needed
   d_base = alamrs_value.query.filter_by(device=DeviceName).first()
 
@@ -231,8 +262,8 @@ def temp2():
 @app.get("/api/ttest")
 @app.get("/api/ttest/<name>")
 def temptest(name = 'None'): #MAIN FETCHING DATA TO main Chart
-  if (name == 'None' or not name in getListOfAllDevices()): name = getListOfAllDevices()[0]
-  #print( not name in getListOfAllDevices())
+  if (name == 'None' or not name in get_all_devices(temps.query.all())): name = get_all_devices(temps.query.all())[0]
+  #print( not name in get_all_devices(temps.query.all()))
   #strur = temps.query.all()
   strur = temps.query.filter_by(device=name).all()
   
@@ -253,7 +284,7 @@ def test_1():
 
 @app.get("/get/telemetry/<name>")
 def get_telemetry(name = 'None'): # GET SPEC TELEMETRY DATA
-  if (name == 'None'): name = getListOfAllDevices()[0]
+  if (name == 'None'): name = get_all_devices(temps.query.all())[0]
   #print('get stuff ### - {} - ####'.format(name))
   strur = temps.query.order_by(temps.id.desc()).filter_by(device=name).first() # can bug if device doesnt exist in db
   return {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
@@ -281,6 +312,7 @@ def get_ifConnected(): # get list of if devices i connected
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
                                         
+  test_alarm()
   app.run(host='0.0.0.0', port=5000,debug=True)
   #app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
 
