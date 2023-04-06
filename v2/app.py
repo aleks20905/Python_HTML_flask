@@ -15,39 +15,6 @@ from threading import Thread
 # log = logging.getLogger('werkzeug')
 # log.setLevel(logging.ERROR)
 
-hostname = 'localhost'
-database = 'iotBrick'
-username = 'postgres'
-pwd = 'postgres'
-port_id = 5432
-conn = None
-
-def comment():
-### a = 0
-
-# try:
-#     with psycopg2.connect(
-#                 host = hostname,
-#                 dbname = database,
-#                 user = username,
-#                 password = pwd,
-#                 port = port_id) as conn:
-
-#         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            
-#                 cur.execute('''SELECT * FROM ftest
-#                         ORDER BY id desc limit 100''')
-#                 a = cur.fetchall()
-              
-                
-                
-# except Exception as error:
-#     print(error)
-# finally:
-#     if conn is not None:
-#         conn.close()
-  print("aaa")
-
 def alarm_main(DeviceName,strname, temp):
        
   a = temps.query.filter_by(device=DeviceName).filter(temps.time>=datetime.datetime.now() - datetime.timedelta(minutes=6)).all() # fetch all data for the last 6 min
@@ -196,7 +163,7 @@ def devices():
   return render_template('devices.html' ,list = d_merged.items())
 
 
-@app.route('/alarms/') ## TO DO 
+@app.route('/alarms/') 
 def alarms():
   ##strur = alarms_sate.query.all() #print(strur[1].id)
   
@@ -213,7 +180,7 @@ def alarms():
   return render_template('alarms.html', list = d_merged.items(),lenth = len(d_merged))
 
 @app.route('/alarm/')
-@app.route('/alarm/<DeviceName>', methods=['POST','GET']) ## TO DO 
+@app.route('/alarm/<DeviceName>', methods=['POST','GET']) 
 def alarm(DeviceName = 'None'):
   if (DeviceName == 'None'): DeviceName = getListOfAllDevices()[0]
   db.create_all() # create new tables if needed
@@ -246,12 +213,12 @@ def alarm(DeviceName = 'None'):
 
 
 
-@app.get("/update")
+@app.get("/update") # test not in use
 def now():
   strur = temps.query.order_by(temps.id.desc()).first()
   return str(strur.temp2)
 
-@app.get("/api/temp2")
+@app.get("/api/temp2") # not in use 
 def temp2():
   strur = temps.query.all()
   
@@ -263,7 +230,7 @@ def temp2():
 
 @app.get("/api/ttest")
 @app.get("/api/ttest/<name>")
-def temptest(name = 'None'):
+def temptest(name = 'None'): #MAIN FETCHING DATA TO main Chart
   if (name == 'None' or not name in getListOfAllDevices()): name = getListOfAllDevices()[0]
   #print( not name in getListOfAllDevices())
   #strur = temps.query.all()
@@ -278,21 +245,21 @@ def temptest(name = 'None'):
   return {'temp1':temp1,'temp2':temp2, 'time':time,'temp3':temp3, 'temp4': temp4,'len':len(strur)}
 
 
-@app.get("/test")
+@app.get("/test") # TEST NOT IN USE CHEK FOR SPEC DEVICE MANUALY
 def test_1():
   temp2 = temps.query.order_by(temps.id.desc()).filter_by(device='esp32Unknow123').first().temp2
   return str(temp2)  
 
 
 @app.get("/get/telemetry/<name>")
-def get_telemetry(name = 'None'):
+def get_telemetry(name = 'None'): # GET SPEC TELEMETRY DATA
   if (name == 'None'): name = getListOfAllDevices()[0]
   #print('get stuff ### - {} - ####'.format(name))
   strur = temps.query.order_by(temps.id.desc()).filter_by(device=name).first() # can bug if device doesnt exist in db
   return {'temp2': float(strur.temp2),'temp3':float(strur.temp3),'temp4':float(strur.temp4)}
 
 @app.get("/get/latestResponse")
-def get_latestResponse():
+def get_latestResponse(): # GET list of latest response form the devices
   a = getAllDeviceLatestRespons()
  
   for i in a:
@@ -301,7 +268,7 @@ def get_latestResponse():
   return a
 
 @app.get("/get/ifConnected")
-def get_ifConnected():
+def get_ifConnected(): # get list of if devices i connected
   
   a = getAllDeviceLatestRespons()
   a = {i:datetime.datetime.strptime(a[i], '%Y-%m-%d %H:%M:%S.%f') for i in a} 
@@ -313,11 +280,7 @@ def get_ifConnected():
   return a
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
-  # thread = Thread(target = alarm, args = ('temp2', 10)) #uncoment to activate alarms
-  # thread.start()                                        #uncoment to activate alarms  
-  
-  
-  
+                                        
   app.run(host='0.0.0.0', port=5000,debug=True)
   #app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
 
