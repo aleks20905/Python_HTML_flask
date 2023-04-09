@@ -1,7 +1,6 @@
-from flask import Flask,jsonify, render_template, request, redirect, url_for, flash
+from flask import Flask,jsonify, render_template, request, redirect, url_for, make_response, flash
 from flask_sqlalchemy import SQLAlchemy
 import plotly
-import plotly_express as px
 import plotly.graph_objects as go
 import pandas as pd
 import psycopg2
@@ -9,6 +8,7 @@ import psycopg2.extras
 import json
 import time
 import datetime
+import csv
 from threading import Thread
 
 # import logging
@@ -309,6 +309,23 @@ def get_ifConnected(): # get list of if devices i connected
     a[i] = 'connected' if a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1) else 'disconnected' # datetime.timedelta(minutes=1) set the time to get connected stament
     #a[i] = a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1)
   return a
+
+@app.route('/csv/')  
+def download_csv():  
+  data = temps.query.all()
+  a = []
+  headers = ['device', 'temp1', 'temp2', 'temp3', 'temp4', 'state1','time']  # replace with your own model's column names
+  a.append(headers)
+   
+  for row in data:
+    a.append([row.device, row.time, row.temp1, row.temp2, row.temp3, row.temp4, row.state1]) 
+  
+  csv = str(a) 
+  response = make_response(csv)
+  cd = 'attachment; filename=mycsv.csv'
+  response.headers['Content-Disposition'] = cd 
+  response.mimetype='text/csv'
+  return response
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
                                         
