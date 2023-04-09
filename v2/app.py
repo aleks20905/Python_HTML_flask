@@ -329,7 +329,7 @@ def download_csv():
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
                                         
-  test_alarm()
+  
   app.run(host='0.0.0.0', port=5000,debug=True)
   #app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
 

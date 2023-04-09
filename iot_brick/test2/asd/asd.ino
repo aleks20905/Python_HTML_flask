@@ -1,9 +1,13 @@
 #include <ESP8266WiFi.h>
 
-const char* ssid = "MSAT";
-const char* password = "83827525";
+//const char* ssid = "MSAT";
+//const char* password = "83827525";
 
-const char* host = "192.168.11.209";
+
+const char* ssid = "HUAWEI P20";
+const char* password = "12345678";
+
+const char* host = "192.168.43.35";
 const uint16_t port = 8080;
 
 WiFiClient client;
