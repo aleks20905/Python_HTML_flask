@@ -1,7 +1,6 @@
 from flask import Flask,jsonify, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 import plotly
-import plotly_express as px
 import plotly.graph_objects as go
 import pandas as pd
 import psycopg2
@@ -312,7 +311,7 @@ def get_ifConnected(): # get list of if devices i connected
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
                                         
-  test_alarm()
+  
   app.run(host='0.0.0.0', port=5000,debug=True)
   #app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
 
