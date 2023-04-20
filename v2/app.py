@@ -47,7 +47,7 @@ def get_average_temp(device,row,time_ago):
 
 def test_alarm():
   
-  time_ago = datetime.now() - timedelta(days=36)
+  time_ago = datetime.now() - timedelta(days=1836)
   data = {'temp1','temp2','temp3','temp4'}
   
   
@@ -72,9 +72,23 @@ def test_alarm():
   
   
   
-  print(average_of_devices)
-  print(alarm_value)
-    
+  for key_b, value_b in alarm_value.items():
+    # Check if the key exists in average_of_devices
+    if key_b in average_of_devices:
+      # Loop over the keys and values of the nested dictionary
+      for sub_key_b, sub_value_b in value_b.items():
+        # Check if the sub_key exists in average_of_devices[key_b]
+        if sub_key_b in average_of_devices[key_b]:
+          # Check if the sub_value is bigger than average_of_devices[key_b][sub_key_b]
+          if sub_value_b > average_of_devices[key_b][sub_key_b]:
+            # Print something
+            print(f"{sub_key_b} of {key_b} is bigger than {average_of_devices[key_b][sub_key_b]}")
+        else:
+          # Print something
+          print(f"{sub_key_b} of {key_b} does not exist in average_of_devices")
+    else:
+      # Print something
+      print(f"{key_b} does not exist in average_of_devices")
     
     
     
