@@ -7,7 +7,7 @@ import psycopg2
 import psycopg2.extras
 import json
 import time
-import datetime
+from datetime import datetime, timedelta
 import csv
 from threading import Thread
 
@@ -17,7 +17,7 @@ from threading import Thread
 
 def alarm_main(DeviceName,strname, temp):
        
-  a = temps.query.filter_by(device=DeviceName).filter(temps.time>=datetime.datetime.now() - datetime.timedelta(minutes=6)).all() # fetch all data for the last 6 min
+  a = temps.query.filter_by(device=DeviceName).filter(temps.time>=datetime.now() - timedelta(minutes=6)).all() # fetch all data for the last 6 min
   count= 0
   print(".") #printing ......
   
@@ -25,10 +25,10 @@ def alarm_main(DeviceName,strname, temp):
       
       if i[strname]>temp:
           count+=1
-          #print(i )#-datetime.timedelta(seconds=5) 
+          #print(i )#-timedelta(seconds=5) 
                       
       if len(a)*0.7<count:
-          #requests.post("https://api.telegram.org/bot5495441993:AAFy_9ujooWqi5ZH2PiMXCAXoxxf6ZkvUeY/sendMessage?chat_id=-1001683799597&text={} {}".format(strname,datetime.datetime.now()))
+          #requests.post("https://api.telegram.org/bot5495441993:AAFy_9ujooWqi5ZH2PiMXCAXoxxf6ZkvUeY/sendMessage?chat_id=-1001683799597&text={} {}".format(strname,datetime.now()))
           #print("aa")        #do someting
           print("well ") 
           print(len(a),count,len(a)*0.7<count) 
@@ -36,36 +36,52 @@ def alarm_main(DeviceName,strname, temp):
           
   time.sleep(2)
 
+
+def get_average_temp(device,row,time_ago):
+    # Query the database for the average value of "temp1" for the last 5 minutes
+    result = db.session.query(db.func.avg(getattr(temps,row))).filter(temps.device == device).filter(temps.time > time_ago).first()
+    
+    # Return the average temperature value rounded to 2 decimal places
+    return round(result[0], 2) if result[0] is not None else None
+       
+
 def test_alarm():
   
-  db_alarm_state = alarms_sate.query.all()
+  time_ago = datetime.now() - timedelta(days=36)
+  data = {'temp1','temp2','temp3','temp4'}
+  
+  
   alarm_state = []
-  for rec in db_alarm_state:
+  for rec in alarms_state.query.all():
     alarm_state.append({"device":rec.device, 'temp1' :rec.temp1,'temp2' :rec.temp2,'temp3' :rec.temp3,'temp4' :rec.temp4,'globalstatus':rec.globalstatus})
   all_on_devices = [ sub['device'] for sub in alarm_state if sub["globalstatus"]] # list of all devices witch alarms_state is turn 'On'
   
   
-  all_records = temps.query.filter(temps.device.in_(all_on_devices)).filter(temps.time>=datetime.datetime.now() - datetime.timedelta(days=25)).all() # fetch all data for the last 6 min
-  mylist = [{"device": rec.device, 'temp1': rec.temp1, 'temp2': rec.temp2, 'temp3': rec.temp3, 'temp4': rec.temp4} for rec in all_records]
-  db_alarm_value = alamrs_value.query.all()
+  # all_records = temps.query.filter(temps.device.in_(all_on_devices)).filter(temps.time>=time_ago).all() # fetch all data for the last 6 min
+  # mylist = [{"device": rec.device, 'temp1': rec.temp1, 'temp2': rec.temp2, 'temp3': rec.temp3, 'temp4': rec.temp4} for rec in all_records]
+  
+  db_alarm_value = alarms_value.query.all()
   alarm_value = {i.device: {'temp1': i.temp1, 'temp2': i.temp2, 'temp3': i.temp3, 'temp4': i.temp4} for i in db_alarm_value}
   
-  for i in mylist:
-    print(i['temp1'])
-    print(alarm_value[i['device']]['temp1'])
-    
-    
-    
-    
-    
-    
-    
-    
-    
-  if not all_records:
-    print("EMPty")
   
- 
+  
+  selected_devices = get_all_devices(temps.query.filter(temps.device.in_(all_on_devices)).all())  
+  average_of_devices = {dev:{row: get_average_temp(dev,row, time_ago) for row in data} for dev in selected_devices}
+  
+  
+  
+  
+  
+  print(average_of_devices)
+  print(alarm_value)
+    
+    
+    
+    
+    
+  
+
+   
             
 app = Flask(__name__)
 app.secret_key = "padeaznam"
@@ -84,7 +100,7 @@ class temps(db.Model):
   temp4=db.Column(db.DECIMAL(5,2))
   state1=db.Column(db.BOOLEAN)
   time = db.Column(db.TIMESTAMP)
-class alarms_sate(db.Model):
+class alarms_state(db.Model):
   __tablename__='alarms'
   id = db.Column(db.Integer,primary_key=True)
   device =  db.Column(db.String(40))
@@ -94,7 +110,7 @@ class alarms_sate(db.Model):
   temp4 =   db.Column(db.BOOLEAN)
   state1 =  db.Column(db.BOOLEAN)
   globalstatus = db.Column(db.BOOLEAN)
-class alamrs_value(db.Model):
+class alarms_value(db.Model):
   __tablename__='alarmsvalue'
   id=db.Column(db.Integer,primary_key=True)
   device=db.Column(db.String(40))
@@ -123,12 +139,12 @@ def Extract(lst,t): # extrakt data from db Extrakt(temps.query.all(),'time')
   return ['{}'.format(getattr(item,t)) for item in lst]
 
 def globalstatus_alarms(): # return globalstatus Alarm dict with all devices
-  a = alarms_sate.query.all()
+  a = alarms_state.query.all()
   mylist = {}
   for i in a:
     mylist[i.device]={'temp1' :i.temp1,'temp2' :i.temp2,'temp3' :i.temp3,'temp4' :i.temp4,'state1':i.state1,'globalstatus' :i.globalstatus}
   
-  for i in get_all_devices(temps.query.all()): # chek if all devices in DBalarms_sate are in DBtemps 
+  for i in get_all_devices(temps.query.all()): # chek if all devices in DBalarms_state are in DBtemps 
     if (i not in mylist):         # and if not it create virtial just for buffer just to NOT CRASH !!!
       mylist[i]={'temp1' :False,'temp2' :False,'temp3' :False,'temp4' :False,'state1':False,'globalstatus' :False}
       print("create new alarms cuz doesnt exist")
@@ -151,13 +167,13 @@ def dicCount(): # return dict with device: count || {device1: 1, devic2: 2}
   return dic 
   
 def alarms_values_list():
-  a = alamrs_value.query.all()
+  a = alarms_value.query.all()
   
   mylist = {}
   for i in a:
     mylist[i.device]={'temp1' :i.temp1,'temp2' :i.temp2,'temp3' :i.temp3,'temp4' :i.temp4}
   
-  for i in get_all_devices(temps.query.all()): # chek if all devices in DBalarms_sate are in DBtemps 
+  for i in get_all_devices(temps.query.all()): # chek if all devices in DBalarms_state are in DBtemps 
     if (i not in mylist):         # and if not it create virtial just for buffer just to NOT CRASH !!!
       mylist[i]={'temp1' :None,'temp2' :None,'temp3' :None,'temp4' :None}
       print("create new alarms cuz doesnt exist")
@@ -196,7 +212,7 @@ def devices():
 
 @app.route('/alarms/') 
 def alarms():
-  ##strur = alarms_sate.query.all() #print(strur[1].id)
+  ##strur = alarms_state.query.all() #print(strur[1].id)
   
   
   List = getAllDeviceLatestTelemtry()
@@ -215,7 +231,7 @@ def alarms():
 def alarm(DeviceName = 'None'):
   if (DeviceName == 'None'): DeviceName = get_all_devices(temps.query.all())[0]
   db.create_all() # create new tables if needed
-  d_base = alamrs_value.query.filter_by(device=DeviceName).first()
+  d_base = alarms_value.query.filter_by(device=DeviceName).first()
 
   if request.method == 'POST':
     req_form = request.form.to_dict() # request form the site gets the atribute and returns dict of it
@@ -227,11 +243,11 @@ def alarm(DeviceName = 'None'):
       
     
   if (d_base is None): # if device doest exist in alarms_value it creates one
-    print("alamrs_value add new element")
-    user = alamrs_value(device = DeviceName ,temp1='50', temp2='50',temp3='50',temp4='50') 
+    print("alarms_value add new element")
+    user = alarms_value(device = DeviceName ,temp1='50', temp2='50',temp3='50',temp4='50') 
     db.session.add(user)
     db.session.commit() 
-    d_base =  alamrs_value.query.filter_by(device=DeviceName).first()
+    d_base =  alarms_value.query.filter_by(device=DeviceName).first()
   
   d_merged = {
     "temp1": (None, 'On', d_base.temp1, 1),
@@ -302,12 +318,12 @@ def get_latestResponse(): # GET list of latest response form the devices
 def get_ifConnected(): # get list of if devices i connected
   
   a = getAllDeviceLatestRespons()
-  a = {i:datetime.datetime.strptime(a[i], '%Y-%m-%d %H:%M:%S.%f') for i in a} 
-  # {'Esp8266N2': datetime.datetime(2023, 1, 19, 18, 32, 29, 848165), 'Esp8266': datetime.datetime(2023, 1, 19, 19, 8, 47, 745108), 'Esp8266new': datetime.datetime(2023, 1, 19, 19, 8, 49, 751757)}
+  a = {i:datetime.strptime(a[i], '%Y-%m-%d %H:%M:%S.%f') for i in a} 
+  # {'Esp8266N2': datetime(2023, 1, 19, 18, 32, 29, 848165), 'Esp8266': datetime(2023, 1, 19, 19, 8, 47, 745108), 'Esp8266new': datetime(2023, 1, 19, 19, 8, 49, 751757)}
   #print(a) 
   for i in a:
-    a[i] = 'connected' if a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1) else 'disconnected' # datetime.timedelta(minutes=1) set the time to get connected stament
-    #a[i] = a[i] > datetime.datetime.now() -  datetime.timedelta(minutes=1)
+    a[i] = 'connected' if a[i] > datetime.now() -  timedelta(minutes=1) else 'disconnected' # timedelta(minutes=1) set the time to get connected stament
+    #a[i] = a[i] > datetime.now() -  timedelta(minutes=1)
   return a
 
 @app.route('/csv/')  
@@ -328,7 +344,8 @@ def download_csv():
   return response
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
-                                        
+                                       
+  test_alarm()
   
   app.run(host='0.0.0.0', port=5000,debug=True)
   #app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
