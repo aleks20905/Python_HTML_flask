@@ -48,6 +48,7 @@ def get_average_temp(device,row,time_ago):
 
 def test_alarm():
   
+<<<<<<< HEAD
   while True:
     
     time_ago = datetime.now() - timedelta(days=306)
@@ -56,6 +57,50 @@ def test_alarm():
     alarm_state = [{"device":rec.device, 'temp1' :rec.temp1,'temp2' :rec.temp2,'temp3' :rec.temp3,'temp4' :rec.temp4,'globalstatus':rec.globalstatus} for rec in alarms_state.query.all()]
     all_on_devices = [ sub['device'] for sub in alarm_state if sub["globalstatus"]] # list of all devices witch alarms_state is turn 'On'
     
+=======
+  time_ago = datetime.now() - timedelta(days=1836)
+  data = {'temp1','temp2','temp3','temp4'}
+  
+  
+  alarm_state = []
+  for rec in alarms_state.query.all():
+    alarm_state.append({"device":rec.device, 'temp1' :rec.temp1,'temp2' :rec.temp2,'temp3' :rec.temp3,'temp4' :rec.temp4,'globalstatus':rec.globalstatus})
+  all_on_devices = [ sub['device'] for sub in alarm_state if sub["globalstatus"]] # list of all devices witch alarms_state is turn 'On'
+  
+  
+  # all_records = temps.query.filter(temps.device.in_(all_on_devices)).filter(temps.time>=time_ago).all() # fetch all data for the last 6 min
+  # mylist = [{"device": rec.device, 'temp1': rec.temp1, 'temp2': rec.temp2, 'temp3': rec.temp3, 'temp4': rec.temp4} for rec in all_records]
+  
+  db_alarm_value = alarms_value.query.all()
+  alarm_value = {i.device: {'temp1': i.temp1, 'temp2': i.temp2, 'temp3': i.temp3, 'temp4': i.temp4} for i in db_alarm_value}
+  
+  
+  
+  selected_devices = get_all_devices(temps.query.filter(temps.device.in_(all_on_devices)).all())  
+  average_of_devices = {dev:{row: get_average_temp(dev,row, time_ago) for row in data} for dev in selected_devices}
+  
+  
+  
+  
+  
+  for key_b, value_b in alarm_value.items():
+    # Check if the key exists in average_of_devices
+    if key_b in average_of_devices:
+      # Loop over the keys and values of the nested dictionary
+      for sub_key_b, sub_value_b in value_b.items():
+        # Check if the sub_key exists in average_of_devices[key_b]
+        if sub_key_b in average_of_devices[key_b]:
+          # Check if the sub_value is bigger than average_of_devices[key_b][sub_key_b]
+          if sub_value_b > average_of_devices[key_b][sub_key_b]:
+            # Print something
+            print(f"{sub_key_b} of {key_b} is bigger than {average_of_devices[key_b][sub_key_b]}")
+        else:
+          # Print something
+          print(f"{sub_key_b} of {key_b} does not exist in average_of_devices")
+    else:
+      # Print something
+      print(f"{key_b} does not exist in average_of_devices")
+>>>>>>> 6529169eb8589ba0a61f34737088a27efce0c8db
     
     # all_records = temps.query.filter(temps.device.in_(all_on_devices)).filter(temps.time>=time_ago).all() # fetch all data for the last 6 min
     # mylist = [{"device": rec.device, 'temp1': rec.temp1, 'temp2': rec.temp2, 'temp3': rec.temp3, 'temp4': rec.temp4} for rec in all_records]
