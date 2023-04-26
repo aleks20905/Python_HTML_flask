@@ -10,6 +10,7 @@ import time
 from datetime import datetime, timedelta
 import csv
 from threading import Thread
+import requests
 
 # import logging
 # log = logging.getLogger('werkzeug')
@@ -47,35 +48,44 @@ def get_average_temp(device,row,time_ago):
 
 def test_alarm():
   
-  time_ago = datetime.now() - timedelta(days=36)
-  data = {'temp1','temp2','temp3','temp4'}
+  while True:
+    
+    time_ago = datetime.now() - timedelta(days=306)
+    data = {'temp1','temp2','temp3','temp4'}
   
-  
-  alarm_state = []
-  for rec in alarms_state.query.all():
-    alarm_state.append({"device":rec.device, 'temp1' :rec.temp1,'temp2' :rec.temp2,'temp3' :rec.temp3,'temp4' :rec.temp4,'globalstatus':rec.globalstatus})
-  all_on_devices = [ sub['device'] for sub in alarm_state if sub["globalstatus"]] # list of all devices witch alarms_state is turn 'On'
-  
-  
-  # all_records = temps.query.filter(temps.device.in_(all_on_devices)).filter(temps.time>=time_ago).all() # fetch all data for the last 6 min
-  # mylist = [{"device": rec.device, 'temp1': rec.temp1, 'temp2': rec.temp2, 'temp3': rec.temp3, 'temp4': rec.temp4} for rec in all_records]
-  
-  db_alarm_value = alarms_value.query.all()
-  alarm_value = {i.device: {'temp1': i.temp1, 'temp2': i.temp2, 'temp3': i.temp3, 'temp4': i.temp4} for i in db_alarm_value}
-  
-  
-  
-  selected_devices = get_all_devices(temps.query.filter(temps.device.in_(all_on_devices)).all())  
-  average_of_devices = {dev:{row: get_average_temp(dev,row, time_ago) for row in data} for dev in selected_devices}
-  
-  
-  
-  
-  
-  print(average_of_devices)
-  print(alarm_value)
+    alarm_state = [{"device":rec.device, 'temp1' :rec.temp1,'temp2' :rec.temp2,'temp3' :rec.temp3,'temp4' :rec.temp4,'globalstatus':rec.globalstatus} for rec in alarms_state.query.all()]
+    all_on_devices = [ sub['device'] for sub in alarm_state if sub["globalstatus"]] # list of all devices witch alarms_state is turn 'On'
     
     
+    # all_records = temps.query.filter(temps.device.in_(all_on_devices)).filter(temps.time>=time_ago).all() # fetch all data for the last 6 min
+    # mylist = [{"device": rec.device, 'temp1': rec.temp1, 'temp2': rec.temp2, 'temp3': rec.temp3, 'temp4': rec.temp4} for rec in all_records]
+    
+    db_alarm_value = alarms_value.query.all()
+    alarm_value = {i.device: {'temp1': i.temp1, 'temp2': i.temp2, 'temp3': i.temp3, 'temp4': i.temp4} for i in db_alarm_value}
+    
+    
+    selected_devices = get_all_devices(temps.query.filter(temps.device.in_(all_on_devices)).all())  
+    average_of_devices = {dev:{row: get_average_temp(dev,row, time_ago) for row in data} for dev in selected_devices}
+    
+    
+    # print(average_of_devices)
+    # print(alarm_value)
+    
+    request_status = False
+    time.sleep(5)  
+    for key, value in average_of_devices.items():
+      if key in alarm_value:
+        for subkey, subvalue in value.items():
+          if subkey in alarm_value[key]:
+            if subvalue > alarm_value[key][subkey]:
+              request_status = True
+              time.sleep(1) 
+              #requests.post("https://api.telegram.org/bot5495441993:AAFy_9ujooWqi5ZH2PiMXCAXoxxf6ZkvUeY/sendMessage?chat_id=-1001683799597&text= {}".format(f"device: {key} | temperature is {subvalue} settet limit is {alarm_value[key][subkey]} and exceed the target by[{subvalue - alarm_value[key][subkey]}]"))
+              print(f"device: {key} | temperature is {subvalue} settet limit is {alarm_value[key][subkey]} and exceed the target by[{subvalue - alarm_value[key][subkey]}]")   
+    db.session.commit()                           
+    if request_status:
+      time.sleep(30)  
+    time.sleep(5)  
     
     
     
@@ -345,7 +355,8 @@ def download_csv():
 
 if __name__ == '__main__':  #python interpreter assigns "__main__" to the file you run
                                        
-  test_alarm()
+  t = Thread(target=test_alarm,daemon=True)
+  t.start() 
   
   app.run(host='0.0.0.0', port=5000,debug=True)
   #app.run(host='0.0.0.0', port=5000,debug=True, use_debugger=False, use_reloader=False)
