@@ -86,12 +86,7 @@ def test_alarm():
     if request_status:
       time.sleep(30)  
     time.sleep(5)  
-    
-    
-    
-  
-
-   
+      
             
 app = Flask(__name__)
 app.secret_key = "padeaznam"
