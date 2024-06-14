@@ -1,5 +1,8 @@
 # IoT Brick Telemetry Server v2 
 
+![screenshot](./v2/static/assets/img/devices.bmp)
+![screenshot](./v2/static/assets/img/alarms.bmp)
+
 ## Project Description
 
 This project is an IoT telemetry server that listens for incoming connections from IoT devices, receives telemetry data, and stores it in a PostgreSQL database. The server is designed to handle multiple connections simultaneously using multithreading.
